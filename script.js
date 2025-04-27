@@ -113,25 +113,39 @@ let currentMapId = 'mondstadt_mondstadt_main';
 let layerControl = null;
 let currentLayers = {};
 
-// ピンのアイコン定義
-const icons = {
-    '風神瞳': L.icon({ iconUrl: 'image/hujin.jpg', iconSize: [48, 48], iconAnchor: [24, 24] }),
-    '岩神瞳': L.icon({ iconUrl: 'image/iwagami.jpg', iconSize: [48, 48], iconAnchor: [24, 24] }),
-    '電神瞳': L.icon({ iconUrl: 'image/inazumahitomi.png', iconSize: [48, 48], iconAnchor: [24, 24] }),
-    '草神瞳': L.icon({ iconUrl: 'image/sousin.png', iconSize: [48, 48], iconAnchor: [24, 24] }),
-    '水神瞳': L.icon({ iconUrl: 'image/suijin.png', iconSize: [48, 48], iconAnchor: [24, 24] }),
-    '炎神瞳': L.icon({ iconUrl: 'image/enjin.png', iconSize: [48, 48], iconAnchor: [24, 24] }),
-    'チャレンジ': L.icon({ iconUrl: 'image/challenge.png', iconSize: [48, 48], iconAnchor: [24, 24] }),
-    '仙霊': L.icon({ iconUrl: 'image/senrei.png', iconSize: [48, 48], iconAnchor: [24, 24] }),
-    '立方体': L.icon({ iconUrl: 'image/square.png', iconSize: [48, 48], iconAnchor: [24, 24] }),
-    '鍵紋1': L.icon({ iconUrl: 'image/key1.png', iconSize: [48, 48], iconAnchor: [24, 24] }),
-    '鍵紋2': L.icon({ iconUrl: 'image/key2.png', iconSize: [48, 48], iconAnchor: [24, 24] }),
-    '鍵紋3': L.icon({ iconUrl: 'image/key3.png', iconSize: [48, 48], iconAnchor: [24, 24] }),
-    '普通の宝箱': L.icon({ iconUrl: 'image/hutu.png', iconSize: [48, 48], iconAnchor: [24, 24] }),
-    '精巧な宝箱': L.icon({ iconUrl: 'image/seikou.png', iconSize: [48, 48], iconAnchor: [24, 24] }),
-    '貴重な宝箱': L.icon({ iconUrl: 'image/kityou.png', iconSize: [48, 48], iconAnchor: [24, 24] }),
-    '豪華な宝箱': L.icon({ iconUrl: 'image/gouka.png', iconSize: [48, 48], iconAnchor: [24, 24] })
+// ピンのアイコン定義（ベースサイズ）
+const baseIcons = {
+    '風神瞳': { url: 'image/hujin.jpg', size: [48, 48], anchor: [24, 24] },
+    '岩神瞳': { url: 'image/iwagami.jpg', size: [48, 48], anchor: [24, 24] },
+    '電神瞳': { url: 'image/inazumahitomi.png', size: [48, 48], anchor: [24, 24] },
+    '草神瞳': { url: 'image/sousin.png', size: [48, 48], anchor: [24, 24] },
+    '水神瞳': { url: 'image/suijin.png', size: [48, 48], anchor: [24, 24] },
+    '炎神瞳': { url: 'image/enjin.png', size: [48, 48], anchor: [24, 24] },
+    'チャレンジ': { url: 'image/challenge.png', size: [48, 48], anchor: [24, 24] },
+    '仙霊': { url: 'image/senrei.png', size: [48, 48], anchor: [24, 24] },
+    '立方体': { url: 'image/square.png', size: [48, 48], anchor: [24, 24] },
+    '鍵紋1': { url: 'image/key1.png', size: [48, 48], anchor: [24, 24] },
+    '鍵紋2': { url: 'image/key2.png', size: [48, 48], anchor: [24, 24] },
+    '鍵紋3': { url: 'image/key3.png', size: [48, 48], anchor: [24, 24] },
+    '普通の宝箱': { url: 'image/hutu.png', size: [48, 48], anchor: [24, 24] },
+    '精巧な宝箱': { url: 'image/seikou.png', size: [48, 48], anchor: [24, 24] },
+    '貴重な宝箱': { url: 'image/kityou.png', size: [48, 48], anchor: [24, 24] },
+    '豪華な宝箱': { url: 'image/gouka.png', size: [48, 48], anchor: [24, 24] },
+    '雷霊': { url: 'image/rairei.png', size: [48, 48], anchor: [24, 24] }
 };
+
+// 動的アイコン生成
+function getIcon(type, zoom) {
+    const base = baseIcons[type];
+    const scale = 1 + (zoom / 10); // ズーム-5で0.5、ズーム0で1、ズーム5で1.5
+    const size = [base.size[0] * scale, base.size[1] * scale];
+    const anchor = [base.anchor[0] * scale, base.anchor[1] * scale];
+    return L.icon({
+        iconUrl: base.url,
+        iconSize: size,
+        iconAnchor: anchor
+    });
+}
 
 // 宝箱の印ポイント
 const chestPoints = {
@@ -142,7 +156,7 @@ const chestPoints = {
 };
 
 // 有効なピンの種類
-const validTypes = Object.keys(icons);
+const validTypes = Object.keys(baseIcons);
 
 // ピンデータのエクスポート
 window.exportPoints = function() {
@@ -264,10 +278,15 @@ function renderPoints() {
         if (layer instanceof L.Marker) map.removeLayer(layer);
     });
 
+    const zoom = map.getZoom();
     const selectedTypes = Array.from(document.querySelectorAll('#drawer input[type="checkbox"]:checked')).map(cb => cb.value);
     points.forEach(point => {
         if (point.mapId === currentMapId && selectedTypes.includes(point.type)) {
-            const marker = L.marker(point.coords, { icon: icons[point.type], type: point.type, mapId: point.mapId }).addTo(map);
+            const marker = L.marker(point.coords, {
+                icon: getIcon(point.type, zoom),
+                type: point.type,
+                mapId: point.mapId
+            }).addTo(map);
             const popupContent = `
                 <b>${point.type}</b><br>${point.description || '（説明なし）'}
                 <br><button class="edit" onclick="editPoint(${point.id})">編集</button>
@@ -281,6 +300,11 @@ function renderPoints() {
     });
     console.log(`Rendered points for mapId: ${currentMapId}, count: ${points.filter(p => p.mapId === currentMapId).length}`);
 }
+
+// ズーム時にピンのサイズを更新
+map.on('zoomend', () => {
+    renderPoints();
+});
 
 // ドロワーの開閉
 const toggleDrawer = document.getElementById('toggleDrawer');
