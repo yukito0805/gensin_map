@@ -187,8 +187,8 @@ body {
 /* アイコン選択 */
 .icon-selector {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
     margin: 10px 0;
 }
 
@@ -303,11 +303,15 @@ body {
         gap: 5px;
     }
     .icon-selector {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 8px;
     }
     .icon-option img {
         width: 60px;
         height: 60px;
+    }
+    .icon-option span {
+        font-size: 12px;
     }
     #controls {
         flex-direction: column;
