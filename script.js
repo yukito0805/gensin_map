@@ -138,8 +138,14 @@ const baseIcons = {
 function getIcon(type, zoom) {
     const base = baseIcons[type];
     const scale = 1 + (zoom / 10); // ズーム-5で0.5、ズーム0で1、ズーム5で1.5
-    const size = [base.size[0] * scale, base.size[1] * scale];
-    const anchor = [base.anchor[0] * scale, base.anchor[1] * scale];
+    const size = [
+        Math.max(16, Math.min(96, base.size[0] * scale)),
+        Math.max(16, Math.min(96, base.size[1] * scale))
+    ];
+    const anchor = [
+        Math.max(8, Math.min(48, base.anchor[0] * scale)),
+        Math.max(8, Math.min(48, base.anchor[1] * scale))
+    ];
     return L.icon({
         iconUrl: base.url,
         iconSize: size,
