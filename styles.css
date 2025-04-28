@@ -144,7 +144,7 @@ body {
     padding: 20px;
     border-radius: 5px;
     position: relative;
-    max-width: 600px;
+    max-width: 700px; /* ピンの数増加に対応 */
     width: 90%;
     max-height: 80vh;
     overflow-y: auto;
@@ -201,6 +201,7 @@ body {
     border-radius: 5px;
     cursor: pointer;
     transition: border-color 0.2s;
+    min-width: 100px; /* ピンの重なり防止 */
 }
 
 .icon-option input[type="radio"] {
