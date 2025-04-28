@@ -127,11 +127,12 @@ const baseIcons = {
     '鍵紋1': { url: 'image/key1.png', size: [48, 48], anchor: [24, 24] },
     '鍵紋2': { url: 'image/key2.png', size: [48, 48], anchor: [24, 24] },
     '鍵紋3': { url: 'image/key3.png', size: [48, 48], anchor: [24, 24] },
+    '雷霊': { url: 'image/rairei.png', size: [48, 48], anchor: [24, 24] },
     '普通の宝箱': { url: 'image/hutu.png', size: [48, 48], anchor: [24, 24] },
     '精巧な宝箱': { url: 'image/seikou.png', size: [48, 48], anchor: [24, 24] },
     '貴重な宝箱': { url: 'image/kityou.png', size: [48, 48], anchor: [24, 24] },
     '豪華な宝箱': { url: 'image/gouka.png', size: [48, 48], anchor: [24, 24] },
-    '雷霊': { url: 'image/rairei.png', size: [48, 48], anchor: [24, 24] }
+    '珍奇な宝箱': { url: 'image/tinki.png', size: [48, 48], anchor: [24, 24] }
 };
 
 // 動的アイコン生成
@@ -158,7 +159,8 @@ const chestPoints = {
     '普通の宝箱': 1,
     '精巧な宝箱': 2,
     '貴重な宝箱': 3,
-    '豪華な宝箱': 4
+    '豪華な宝箱': 4,
+    '珍奇な宝箱': 5 // 珍奇な宝箱の印ポイント
 };
 
 // 有効なピンの種類
