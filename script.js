@@ -2,7 +2,8 @@
 const map = L.map('map', {
     crs: L.CRS.Simple,
     minZoom: -5,
-    maxZoom: 5
+    maxZoom: 5,
+    renderer: L.canvas() // Safariでのレンダリングを安定化
 });
 
 // マップ定義
@@ -269,17 +270,26 @@ function switchMap(region, area, layerId = 'main') {
     Object.keys(areaData.layers).forEach(layerKey => {
         const layerData = areaData.layers[layerKey];
         console.log(`Loading layer: ${layerData.name}, image: ${layerData.image}`);
-        currentLayers[layerKey] = L.imageOverlay(layerData.image, layerData.bounds);
-        layerGroup[layerData.name] = currentLayers[layerKey];
+        const layer = L.imageOverlay(layerData.image, layerData.bounds);
+        layer.on('error', () => {
+            console.error(`Failed to load image: ${layerData.image}`);
+            alert(`マップ画像の読み込みに失敗しました: ${layerData.name}`);
+        });
+        currentLayers[layerKey] = layer;
+        layerGroup[layerData.name] = layer;
     });
 
-    currentLayers[layerId].addTo(map);
-    map.fitBounds(imageBounds);
-    map.setView([imageBounds[1][0] / 2, imageBounds[1][1] / 2], 0);
-
-    layerControl = L.control.layers(layerGroup, null, { collapsed: false }).addTo(map);
-    renderPoints();
-    updateCounts();
+    try {
+        currentLayers[layerId].addTo(map);
+        map.fitBounds(imageBounds);
+        map.setView([imageBounds[1][0] / 2, imageBounds[1][1] / 2], 0);
+        layerControl = L.control.layers(layerGroup, null, { collapsed: false }).addTo(map);
+        renderPoints();
+        updateCounts();
+    } catch (err) {
+        console.error('Error in switchMap:', err);
+        alert('マップの切り替えに失敗しました');
+    }
 }
 
 // ピンをマップに描画
@@ -292,19 +302,23 @@ function renderPoints() {
     const selectedTypes = Array.from(document.querySelectorAll('#drawer input[type="checkbox"]:checked')).map(cb => cb.value);
     points.forEach(point => {
         if (point.mapId === currentMapId && selectedTypes.includes(point.type)) {
-            const marker = L.marker(point.coords, {
-                icon: getIcon(point.type, zoom),
-                type: point.type,
-                mapId: point.mapId
-            }).addTo(map);
-            const popupContent = `
-                <b>${point.type}</b><br>${point.description || '（説明なし）'}
-                <br><button class="edit" onclick="editPoint(${point.id})">編集</button>
-                <button onclick="deletePoint(${point.id})">削除</button>
-            `;
-            marker.bindPopup(popupContent);
-            if (point.youtubeUrl) {
-                marker.on('click', () => openVideoModal(point.youtubeUrl));
+            try {
+                const marker = L.marker(point.coords, {
+                    icon: getIcon(point.type, zoom),
+                    type: point.type,
+                    mapId: point.mapId
+                }).addTo(map);
+                const popupContent = `
+                    <b>${point.type}</b><br>${point.description || '（説明なし）'}
+                    <br><button class="edit" onclick="editPoint(${point.id})">編集</button>
+                    <button onclick="deletePoint(${point.id})">削除</button>
+                `;
+                marker.bindPopup(popupContent);
+                if (point.youtubeUrl) {
+                    marker.on('click touchend', () => openVideoModal(point.youtubeUrl));
+                }
+            } catch (err) {
+                console.error(`Error rendering point ${point.id}:`, err);
             }
         }
     });
@@ -329,7 +343,7 @@ closeDrawer.addEventListener('click', () => {
     drawer.classList.remove('open');
 });
 
-// ドロワーの外をクリックで閉じる
+// ドロワーの外をクリック/タッチで閉じる
 window.addEventListener('click', (event) => {
     if (drawer.classList.contains('open') && !drawer.contains(event.target) && !toggleDrawer.contains(event.target)) {
         drawer.classList.remove('open');
@@ -398,9 +412,14 @@ layerSelect.addEventListener('change', () => {
 });
 
 // 初期マップ（モンド：モンド）
-updateAreaSelect('mondstadt');
-updateLayerSelect('mondstadt', 'mondstadt');
-switchMap('mondstadt', 'mondstadt');
+try {
+    updateAreaSelect('mondstadt');
+    updateLayerSelect('mondstadt', 'mondstadt');
+    switchMap('mondstadt', 'mondstadt');
+} catch (err) {
+    console.error('Error initializing map:', err);
+    alert('マップの初期化に失敗しました');
+}
 
 // ピンの削除
 window.deletePoint = function(id) {
@@ -415,7 +434,10 @@ window.editPoint = function(id) {
     const point = points.find(p => p.id === id);
     if (!point) return;
 
-    document.getElementById('pinModal').style.display = 'flex';
+    const pinModal = document.getElementById('pinModal');
+    setTimeout(() => {
+        pinModal.style.display = 'flex';
+    }, 100); // Safariでのレンダリング遅延を回避
     document.getElementById('modalTitle').textContent = 'ピンを編集';
     document.querySelector(`input[name="type"][value="${point.type}"]`).checked = true;
     document.getElementById('description').value = point.description || '';
@@ -474,11 +496,15 @@ const addPointHandler = function(e) {
 const pinForm = document.getElementById('pinForm');
 pinForm.onsubmit = addPointHandler;
 
-// マップクリックでピン追加モーダル
+// マップクリック/タッチでピン追加モーダル
 let tempCoords = null;
-map.on('click', e => {
+map.on('click touchend', e => {
     tempCoords = [e.latlng.lat, e.latlng.lng];
-    document.getElementById('pinModal').style.display = 'flex';
+    const pinModal = document.getElementById('pinModal');
+    console.log('Opening pin modal at coords:', tempCoords);
+    setTimeout(() => {
+        pinModal.style.display = 'flex';
+    }, 100); // Safariでのレンダリング遅延を回避
     document.getElementById('modalTitle').textContent = 'ピンを追加';
     pinForm.reset();
     document.querySelector('input[name="type"][value="風神瞳"]').checked = true;
@@ -488,6 +514,7 @@ map.on('click', e => {
 // キャンセルボタン
 const cancelButton = document.getElementById('cancelButton');
 cancelButton.addEventListener('click', closePinModal);
+cancelButton.addEventListener('touchend', closePinModal);
 
 // 動画モーダル
 const videoModal = document.getElementById('videoModal');
@@ -496,13 +523,19 @@ const videoClose = document.getElementsByClassName('video-close')[0];
 
 function openVideoModal(url) {
     videoFrame.src = url;
-    videoModal.style.display = 'flex';
+    setTimeout(() => {
+        videoModal.style.display = 'flex';
+    }, 100);
 }
 
 videoClose.onclick = function() {
     videoModal.style.display = 'none';
     videoFrame.src = '';
 };
+videoClose.addEventListener('touchend', () => {
+    videoModal.style.display = 'none';
+    videoFrame.src = '';
+});
 
 // ピンモーダル
 const pinModal = document.getElementById('pinModal');
@@ -516,8 +549,9 @@ function closePinModal() {
 }
 
 pinClose.onclick = closePinModal;
+pinClose.addEventListener('touchend', closePinModal);
 
-// モーダルの外をクリックで閉じる
+// モーダルの外をクリック/タッチで閉じる
 window.onclick = function(event) {
     if (event.target == videoModal) {
         videoModal.style.display = 'none';
@@ -527,3 +561,12 @@ window.onclick = function(event) {
         closePinModal();
     }
 };
+window.addEventListener('touchend', (event) => {
+    if (event.target == videoModal) {
+        videoModal.style.display = 'none';
+        videoFrame.src = '';
+    }
+    if (event.target == pinModal) {
+        closePinModal();
+    }
+});
