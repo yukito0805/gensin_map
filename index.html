@@ -41,11 +41,12 @@
         <label><input type="checkbox" value="鍵紋1" checked onchange="updateCounts()"> 鍵紋1</label>
         <label><input type="checkbox" value="鍵紋2" checked onchange="updateCounts()"> 鍵紋2</label>
         <label><input type="checkbox" value="鍵紋3" checked onchange="updateCounts()"> 鍵紋3</label>
+        <label><input type="checkbox" value="雷霊" checked onchange="updateCounts()"> 雷霊</label>
         <label><input type="checkbox" value="普通の宝箱" checked onchange="updateCounts()"> 普通の宝箱</label>
         <label><input type="checkbox" value="精巧な宝箱" checked onchange="updateCounts()"> 精巧な宝箱</label>
         <label><input type="checkbox" value="貴重な宝箱" checked onchange="updateCounts()"> 貴重な宝箱</label>
         <label><input type="checkbox" value="豪華な宝箱" checked onchange="updateCounts()"> 豪華な宝箱</label>
-        <label><input type="checkbox" value="雷霊" checked onchange="updateCounts()"> 雷霊</label>
+        <label><input type="checkbox" value="珍奇な宝箱" checked onchange="updateCounts()"> 珍奇な宝箱</label>
         <h3>ピンの数</h3>
         <div id="counts"></div>
         <h3>データ管理</h3>
@@ -129,6 +130,11 @@
                         <span>鍵紋3</span>
                     </label>
                     <label class="icon-option">
+                        <input type="radio" name="type" value="雷霊">
+                        <img src="image/rairei.png" alt="雷霊" width="80">
+                        <span>雷霊</span>
+                    </label>
+                    <label class="icon-option">
                         <input type="radio" name="type" value="普通の宝箱">
                         <img src="image/hutu.png" alt="普通の宝箱" width="80">
                         <span>普通の宝箱</span>
@@ -149,9 +155,9 @@
                         <span>豪華な宝箱</span>
                     </label>
                     <label class="icon-option">
-                        <input type="radio" name="type" value="雷霊">
-                        <img src="image/rairei.png" alt="雷霊" width="80">
-                        <span>雷霊</span>
+                        <input type="radio" name="type" value="珍奇な宝箱">
+                        <img src="image/tinki.png" alt="珍奇な宝箱" width="80">
+                        <span>珍奇な宝箱</span>
                     </label>
                 </div>
                 <label for="description">説明:</label>
