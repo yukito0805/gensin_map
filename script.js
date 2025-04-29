@@ -3,7 +3,7 @@ const map = L.map('map', {
     crs: L.CRS.Simple,
     minZoom: -5,
     maxZoom: 5,
-    renderer: L.canvas() // Safariでのレンダリングを安定化
+    renderer: L.canvas() // Safariでのレンダリング安定化
 });
 
 // マップ定義
@@ -73,6 +73,24 @@ const maps = {
                 layers: {
                     main: { name: '淵下宮マップ', image: 'image/enkanomiya.png', bounds: [[0, 0], [2094, 3065]] }
                 }
+            },
+            yathimata: {
+                name: '八衢彦の地',
+                layers: {
+                    main: { name: '八衢彦の地マップ', image: 'image/yathimata.png', bounds: [[0, 0], [1474, 1781]] }
+                }
+            },
+            yathimata2: {
+                name: '八衢姫の地',
+                layers: {
+                    main: { name: '八衢姫の地マップ', image: 'image/yathimata2.png', bounds: [[0, 0], [1430, 1248]] }
+                }
+            },
+            kunado: {
+                name: '岐の地',
+                layers: {
+                    main: { name: '岐の地マップ', image: 'image/kunado.png', bounds: [[0, 0], [998, 1181]] }
+                }
             }
         }
     },
@@ -135,7 +153,9 @@ const baseIcons = {
     '精巧な宝箱': { url: 'image/seikou.png', size: [48, 48], anchor: [24, 24] },
     '貴重な宝箱': { url: 'image/kityou.png', size: [48, 48], anchor: [24, 24] },
     '豪華な宝箱': { url: 'image/gouka.png', size: [48, 48], anchor: [24, 24] },
-    '珍奇な宝箱': { url: 'image/tinki.png', size: [48, 48], anchor: [24, 24] }
+    '珍奇な宝箱': { url: 'image/tinki.png', size: [48, 48
+
+], anchor: [24, 24] }
 };
 
 // 動的アイコン生成
@@ -437,7 +457,7 @@ window.editPoint = function(id) {
     const pinModal = document.getElementById('pinModal');
     setTimeout(() => {
         pinModal.style.display = 'flex';
-    }, 100); // Safariでのレンダリング遅延を回避
+    }, 100);
     document.getElementById('modalTitle').textContent = 'ピンを編集';
     document.querySelector(`input[name="type"][value="${point.type}"]`).checked = true;
     document.getElementById('description').value = point.description || '';
@@ -504,7 +524,7 @@ map.on('click touchend', e => {
     console.log('Opening pin modal at coords:', tempCoords);
     setTimeout(() => {
         pinModal.style.display = 'flex';
-    }, 100); // Safariでのレンダリング遅延を回避
+    }, 100);
     document.getElementById('modalTitle').textContent = 'ピンを追加';
     pinForm.reset();
     document.querySelector('input[name="type"][value="風神瞳"]').checked = true;
