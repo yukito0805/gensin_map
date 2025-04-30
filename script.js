@@ -6,10 +6,15 @@ const map = L.map('map', {
     renderer: L.canvas()
 });
 
-// ← この直後に追加
 map.on('click', function(e) {
-  console.log('クリック位置:', e.latlng);
+  // マウスイベントから正しい緯度経度を取得（タッチにも対応）
+  const latlng = map.mouseEventToLatLng(e.originalEvent);
+  console.log('補正後クリック位置:', latlng);
+
+  // ここにマーカー設置処理などを入れる（元の e.latlng の代わりに latlng を使う）
+  L.marker(latlng).addTo(map); // テスト用
 });
+
 
 // マップ定義
 const maps = {
