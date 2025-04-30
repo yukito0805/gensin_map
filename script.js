@@ -6,6 +6,11 @@ const map = L.map('map', {
     renderer: L.canvas()
 });
 
+// ← この直後に追加
+map.on('click', function(e) {
+  console.log('クリック位置:', e.latlng);
+});
+
 // マップ定義
 const maps = {
     mondstadt: {
