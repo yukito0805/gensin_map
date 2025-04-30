@@ -3,26 +3,13 @@ const map = L.map('map', {
     crs: L.CRS.Simple,
     minZoom: -5,
     maxZoom: 5,
-    zoom: 3, // ズームレベルを調整してみてください
     renderer: L.canvas()
 });
 
-
+// ← この直後に追加
 map.on('click', function(e) {
-  const latlng = map.mouseEventToLatLng(e.originalEvent);
-  console.log('補正後クリック位置:', latlng);
-
-  // アイコンのサイズを調整する
-  const icon = L.icon({
-    iconUrl: 'path_to_icon.png', // アイコン画像のパスを指定
-    iconSize: [32, 32], // アイコンのサイズ
-    iconAnchor: [16, 32], // アイコンの基準位置（アイコンの下中央）
-    popupAnchor: [0, -32] // ポップアップの位置調整（アイコンの上）
-  });
-
-  // マーカーを追加
-  L.marker(latlng, { icon: icon }).addTo(map); // アイコン付きマーカー
-
+  console.log('クリック位置:', e.latlng);
+});
 
 // マップ定義
 const maps = {
@@ -96,7 +83,7 @@ const maps = {
                     main: {
                         name: 'スメールマップ',
                         image: 'image/sumeru_P0_highres.png',
-                        bounds: [[0, 0], [5376, 5376]]
+                        bounds: [[0, 0], [5578, 5543]]
                     }
                 }
             }
