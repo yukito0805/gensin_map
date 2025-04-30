@@ -10,49 +10,132 @@ const map = L.map('map', {
 const maps = {
     mondstadt: {
         areas: {
-            mondstadt: { name: 'モンド', layers: { main: { name: 'モンドマップ', image: 'image/mond.png', bounds: [[0, 0], [1626, 2703]] } } },
-            dragonspine: { name: 'ドラゴンスパイン', layers: { main: { name: 'ドラゴンスパインマップ', image: 'image/placeholder.png', bounds: [[0, 0], [1626, 2703]] } } }
+            mondstadt: {
+                name: 'モンド',
+                layers: {
+                    main: {
+                        name: 'モンドマップ',
+                        image: 'image/mondstadt.png',
+                        bounds: [[0, 0], [2765, 3878]]
+                    }
+                }
+            }
         }
     },
     liyue: {
-        areas: { liyue: { name: '璃月', layers: { main: { name: '璃月マップ', image: 'image/placeholder.png', bounds: [[0, 0], [1626, 2703]] } } } }
+        areas: {
+            liyue: {
+                name: '璃月',
+                layers: {
+                    main: {
+                        name: '璃月マップ',
+                        image: 'image/liyue.png',
+                        bounds: [[0, 0], [4169, 4571]]
+                    }
+                }
+            },
+            chasm: {
+                name: '層岩巨淵',
+                layers: {
+                    main: {
+                        name: '層岩巨淵マップ',
+                        image: 'image/natlan_P0.png',
+                        bounds: [[0, 0], [1677, 1893]]
+                    }
+                }
+            }
+        }
     },
     inazuma: {
         areas: {
-            inazuma1: { name: '稲妻1', layers: { main: { name: '稲妻1マップ', image: 'image/inazuma1.png', bounds: [[0, 0], [3190, 3000]] } } },
-            inazuma2: { name: '稲妻2', layers: { main: { name: '稲妻2マップ', image: 'image/inazuma2.png', bounds: [[0, 0], [2140, 3970]] } } },
-            tenkumo: { name: '天雲峠', layers: { main: { name: '天雲峠マップ', image: 'image/amakumo.png', bounds: [[0, 0], [1715, 2231]] } } },
-            kaigishima: { name: '海祇島', layers: { main: { name: '海祇島マップ', image: 'image/sangonomiya.png', bounds: [[0, 0], [1519, 2262]] } } },
-            tsumei: {
-                name: '鶴見',
+            inazuma1: {
+                name: '稲妻',
                 layers: {
-                    main: { name: '鶴見マップ', image: 'image/turumi.png', bounds: [[0, 0], [1882, 1854]] },
-                    underground1: { name: '鶴見地下1', image: 'image/turumichika.png', bounds: [[0, 0], [1069, 1720]] },
-                    underground2: { name: '鶴見地下2', image: 'image/turumichika2.png', bounds: [[0, 0], [921, 1320]] }
+                    main: {
+                        name: '稲妻マップ',
+                        image: 'image/inazuma1_P0.png',
+                        bounds: [[0, 0], [5568, 6018]]
+                    }
                 }
             },
-            enkanomiya: { name: '淵下宮', layers: { main: { name: '淵下宮マップ', image: 'image/enkanomiya.png', bounds: [[0, 0], [2231, 1714]] } } },
-            yathimata: { name: '八衢彦の地', layers: { main: { name: '八衢彦の地マップ', image: 'image/yathimata.png', bounds: [[0, 0], [1474, 1781]] } } },
-            yathimata2: { name: '八衢姫の地', layers: { main: { name: '八衢姫の地マップ', image: 'image/yathimata2.png', bounds: [[0, 0], [1430, 1248]] } } },
-            kunado: { name: '岐の地', layers: { main: { name: '岐の地マップ', image: 'image/kunado.png', bounds: [[0, 0], [998, 1181]] } } }
+            enkanomiya: {
+                name: '淵下宮',
+                layers: {
+                    main: {
+                        name: '淵下宮マップ',
+                        image: 'image/inazuma_P0.png',
+                        bounds: [[0, 0], [3018, 3171]]
+                    }
+                }
+            }
         }
     },
-            sumeru: {
+    sumeru: {
         areas: {
-            sumeru: { name: 'スメール', layers: { main: { name: 'スメールマップ', image: 'image/sumeru1.png', bounds: [[0, 0], [1761, 2252]] } } },
-            sumeru2: { name: 'スメール2', layers: { main: { name: 'スメール2', image: 'image/sumeru2.png', bounds: [[0, 0], [1778, 2328]] } } },
-            sumeru3: { name: 'スメール3', layers: { main: { name: 'スメール3', image: 'image/sumeru3.png', bounds: [[0, 0], [1781, 2586]] } } },
-            sumeru4: { name: 'スメール4', layers: { main: { name: 'スメール4', image: 'image/sumeru5.png', bounds: [[0, 0], [1778, 2636]] } } },
-            sumeru5: { name: 'スメール5', layers: { main: { name: 'スメール5', image: 'image/sumeru6.png', bounds: [[0, 0], [1791, 2758]] } } },
+            sumeru: {
+                name: 'スメール',
+                layers: {
+                    main: {
+                        name: 'スメールマップ',
+                        image: 'image/sumeru_P0_highres.png',
+                        bounds: [[0, 0], [5578, 5543]]
+                    }
+                }
+            }
         }
     },
     fontaine: {
-        areas: { fontaine: { name: 'フォンテーヌ', layers: { main: { name: 'フォンテーヌマップ', image: 'image/placeholder.png', bounds: [[0, 0], [1626, 2703]] } } } }
+        areas: {
+            fontaine: {
+                name: 'フォンテーヌ',
+                layers: {
+                    main: {
+                        name: 'フォンテーヌマップ',
+                        image: 'image/fontaine_map.png',
+                        bounds: [[0, 0], [4356, 3175]]
+                    }
+                }
+            },
+            seaofpast: {
+                name: '往日の海',
+                layers: {
+                    main: {
+                        name: '往日の海マップ',
+                        image: 'image/map34_P0.png',
+                        bounds: [[0, 0], [1014, 1998]]
+                    }
+                }
+            }
+        }
     },
     natlan: {
-        areas: { natlan: { name: 'ナタ', layers: { main: { name: 'ナタマップ', image: 'image/placeholder.png', bounds: [[0, 0], [1626, 2703]] } } } }
+        areas: {
+            natlan: {
+                name: 'ナタ',
+                layers: {
+                    main: {
+                        name: 'ナタマップ',
+                        image: 'image/natlan_N1.png',
+                        bounds: [[0, 0], [5896, 5432]]
+                    }
+                }
+            },
+            holy_mountain: {
+                name: '古の聖山',
+                layers: {
+                    main: {
+                        name: '古の聖山マップ',
+                        image: 'image/map36_P0.png',
+                        bounds: [[0, 0], [3117, 2634]]
+                    }
+                }
+            }
+        }
     }
 };
+
+
+
 
 // ピンのデータ管理
 let points = JSON.parse(localStorage.getItem('genshinPoints')) || [];
@@ -81,7 +164,7 @@ const baseIcons = {
     'アランナラ': { url: 'image/arannara.png', size: [48, 48], anchor: [24, 24] },
     'スメールギミック': { url: 'image/SGimmick.png', size: [48, 48], anchor: [24, 24] },
     '元素石碑': { url: 'image/sekihi.png', size: [48, 48], anchor: [24, 24] },
-    '短石碑': { url: 'image/dai.png', size: [48, 48], anchor: [24, 24] },
+    '短火装置': { url: 'image/dai.png', size: [48, 48], anchor: [24, 24] },
     '死域': { url: 'image/shiki.png', size: [48, 48], anchor: [24, 24] },
     'リーフコア': { url: 'image/leaf.png', size: [48, 48], anchor: [24, 24] },
 
