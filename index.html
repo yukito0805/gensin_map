@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>原神 探索マップ（テスト）</title>
-    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <!-- 独自CSS -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -37,6 +35,9 @@
         <label><input type="checkbox" value="炎神瞳" checked onchange="updateCounts()"> 炎神瞳</label>
         <label><input type="checkbox" value="チャレンジ" checked onchange="updateCounts()"> チャレンジ</label>
         <label><input type="checkbox" value="仙霊" checked onchange="updateCounts()"> 仙霊</label>
+
+
+        <label><input type="checkbox" value="元素石碑" checked onchange="updateCounts()"> 元素石碑</label>
         <label><input type="checkbox" value="立方体" checked onchange="updateCounts()"> 立方体</label>
         <label><input type="checkbox" value="鍵紋1" checked onchange="updateCounts()"> 鍵紋1</label>
         <label><input type="checkbox" value="鍵紋2" checked onchange="updateCounts()"> 鍵紋2</label>
@@ -44,26 +45,32 @@
         <label><input type="checkbox" value="鍵紋4" checked onchange="updateCounts()"> 鍵紋4</label>
         <label><input type="checkbox" value="鍵紋5" checked onchange="updateCounts()"> 鍵紋5</label>
         <label><input type="checkbox" value="雷霊" checked onchange="updateCounts()"> 雷霊</label>
+
+        <label><input type="checkbox" value="アランナラ" checked onchange="updateCounts()"> アランナラ</label>
+        <label><input type="checkbox" value="スメールギミック" checked onchange="updateCounts()"> スメールギミック</label>
+        <label><input type="checkbox" value="リーフコア" checked onchange="updateCounts()"> リーフコア</label>
+        <label><input type="checkbox" value="短火装置" checked onchange="updateCounts()"> 短火装置</label>
+        <label><input type="checkbox" value="死域" checked onchange="updateCounts()"> 死域</label>
+
         <label><input type="checkbox" value="普通の宝箱" checked onchange="updateCounts()"> 普通の宝箱</label>
         <label><input type="checkbox" value="精巧な宝箱" checked onchange="updateCounts()"> 精巧な宝箱</label>
         <label><input type="checkbox" value="貴重な宝箱" checked onchange="updateCounts()"> 貴重な宝箱</label>
         <label><input type="checkbox" value="豪華な宝箱" checked onchange="updateCounts()"> 豪華な宝箱</label>
         <label><input type="checkbox" value="珍奇な宝箱" checked onchange="updateCounts()"> 珍奇な宝箱</label>
-        <h3>ピンの数</h3>
+        
+<h3>ピンの数</h3>
         <div id="counts"></div>
         <h3>データ管理</h3>
         <button onclick="exportPoints()">エクスポート</button>
         <input type="file" id="importFile" accept=".json" onchange="importPoints(event)">
     </div>
     <div id="map"></div>
-    <!-- 動画ポップアップ用のモーダル -->
     <div id="videoModal" class="modal">
         <div class="modal-content">
             <span class="close video-close">×</span>
             <iframe id="videoFrame" width="560" height="315" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         </div>
     </div>
-    <!-- ピン追加/編集用のモーダル -->
     <div id="pinModal" class="modal">
         <div class="modal-content">
             <span class="close pin-close">×</span>
@@ -112,6 +119,11 @@
                         <span>仙霊</span>
                     </label>
                     <label class="icon-option">
+                        <input type="radio" name="type" value="元素石碑">
+                        <img src="image/sekihi.png" alt="仙霊" width="80">
+                        <span>元素石碑</span>
+                    </label>
+                    <label class="icon-option">
                         <input type="radio" name="type" value="立方体">
                         <img src="image/square.png" alt="立方体" width="80">
                         <span>立方体</span>
@@ -146,6 +158,39 @@
                         <img src="image/rairei.png" alt="雷霊" width="80">
                         <span>雷霊</span>
                     </label>
+
+
+                    <label class="icon-option">
+                        <input type="radio" name="type" value="アランナラ">
+                        <img src="image/arannara.png" alt="アランナラ" width="80">
+                        <span>アランナラ</span>
+                    </label>
+
+
+                    <label class="icon-option">
+                        <input type="radio" name="type" value="スメールギミック">
+                        <img src="image/SGimmick.png" alt="スメールギミック" width="80">
+                        <span>スメールギミック</span>
+                    </label>
+
+                    <label class="icon-option">
+                        <input type="radio" name="type" value="リーフコア">
+                        <img src="image/leaf.png" alt="リーフコア" width="80">
+                        <span>リーフコア</span>
+                    </label>
+
+                    <label class="icon-option">
+                        <input type="radio" name="type" value="短火装置">
+                        <img src="image/dai.png" alt="短火装置" width="80">
+                        <span>短火装置</span>
+                    </label>
+
+                    <label class="icon-option">
+                        <input type="radio" name="type" value="死域">
+                        <img src="image/shiki.png" alt="死域" width="80">
+                        <span>死域</span>
+                    </label>
+
                     <label class="icon-option">
                         <input type="radio" name="type" value="普通の宝箱">
                         <img src="image/hutu.png" alt="普通の宝箱" width="80">
@@ -172,6 +217,14 @@
                         <span>珍奇な宝箱</span>
                     </label>
                 </div>
+                <div class="checkbox-group">
+
+                    <label><input type="checkbox" id="isUnderground" name="isUnderground"> 地下アイテム</label>
+                    <label><input type="checkbox" id="isSeirei" name="isSeirei"> 仙（仙霊）</label>
+                    <label><input type="checkbox" id="isChallenge" name="isChallenge"> チャレンジ</label>
+                    <label><input type="checkbox" id="isKanryou" name="isKanryou"> 完了</label>
+
+                </div>
                 <label for="description">説明:</label>
                 <textarea id="description" name="description"></textarea><br>
                 <label for="youtubeUrl">YouTube URL:</label>
@@ -183,10 +236,7 @@
             </form>
         </div>
     </div>
-
-    <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- 独自JS -->
     <script src="script.js"></script>
 </body>
 </html>
