@@ -2,7 +2,7 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    overflow: hidden; /* iPadでのスクロール干渉を防止 */
+    overflow: hidden;
 }
 
 /* マップコンテナ */
@@ -184,8 +184,8 @@ body {
 }
 
 #pinForm textarea,
-#pinForm input[type="url"] {
-    width: 100%;
+#pinForm input[type="url"],
+#pinForm input[type="checkbox"] {
     padding: 8px;
     margin-top: 5px;
     border: 1px solid #ccc;
@@ -193,8 +193,30 @@ body {
 }
 
 #pinForm textarea {
+    width: 100%;
     height: 80px;
     resize: vertical;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: normal;
+    white-space: nowrap;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: auto;
+    margin: 0;
 }
 
 /* アイコン選択 */
@@ -307,6 +329,83 @@ body {
     background-color: #1976D2;
 }
 
+/* ピンのマーカー */
+.marker-container {
+    position: relative;
+}
+
+.underground-marker::after {
+    content: 'U';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: #FF0000;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: scale(var(--scale, 1));
+}
+
+.seirei-marker::after {
+    content: 'S';
+    position: absolute;
+    bottom: 0;
+    right: 20px;
+    background: #00B7EB;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: scale(var(--scale, 1));
+}
+
+.challenge-marker::after {
+    content: 'C';
+    position: absolute;
+    bottom: 0;
+    right: 40px;
+    background: #FF4040;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: scale(var(--scale, 1));
+}
+
+.Kanryou-marker::after {
+    content: 'P';
+    position: absolute;
+    bottom: 0;
+    right: 40px;
+    background: #FF4040;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: scale(var(--scale, 1));
+}
+
 /* モバイル/タブレット対応 */
 @media (max-width: 1024px) {
     .modal-content {
@@ -331,6 +430,25 @@ body {
     .icon-option span {
         font-size: 12px;
     }
+    .underground-marker::after,
+    .seirei-marker::after,
+    .challenge-marker::after {
+        font-size: 10px;
+        width: 12px;
+        height: 12px;
+    }
+    .seirei-marker::after {
+        right: 15px;
+    }
+    .challenge-marker::after {
+        right: 30px;
+    }
+    .checkbox-group {
+        gap: 10px;
+    }
+    .checkbox-group label {
+        font-size: 14px;
+    }
     #controls {
         flex-direction: column;
         align-items: flex-start;
@@ -338,4 +456,23 @@ body {
     #drawer {
         width: 200px;
     }
+}
+.filter-sidebar {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    max-height: 80vh;
+    overflow-y: auto;
+}
+.filter-sidebar h3 {
+    margin: 0 0 10px;
+    font-size: 16px;
+}
+.filter-sidebar label {
+    display: block;
+    margin: 5px 0;
 }
