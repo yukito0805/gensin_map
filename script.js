@@ -7,13 +7,19 @@ const map = L.map('map', {
 });
 
 map.on('click', function(e) {
-  // マウスイベントから正しい緯度経度を取得（タッチにも対応）
   const latlng = map.mouseEventToLatLng(e.originalEvent);
   console.log('補正後クリック位置:', latlng);
 
-  // ここにマーカー設置処理などを入れる（元の e.latlng の代わりに latlng を使う）
-  L.marker(latlng).addTo(map); // テスト用
-});
+  // アイコンのサイズを調整する
+  const icon = L.icon({
+    iconUrl: 'path_to_icon.png', // アイコン画像のパスを指定
+    iconSize: [32, 32], // アイコンのサイズ
+    iconAnchor: [16, 32], // アイコンの基準位置（アイコンの下中央）
+    popupAnchor: [0, -32] // ポップアップの位置調整（アイコンの上）
+  });
+
+  // マーカーを追加
+  L.marker(latlng, { icon: icon }).addTo(map); // アイコン付きマーカー
 
 
 // マップ定義
