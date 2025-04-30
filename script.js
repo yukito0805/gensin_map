@@ -47,7 +47,7 @@ const maps = {
         }
     },
     fontaine: {
-        areas: { fontaine: { name: 'フォンテーヌ', layers: { main: { name: 'フォンテーヌマップ', image: 'image/placeholder.png', bounds: [[0, 0], [2252, 1761]] } } } }
+        areas: { fontaine: { name: 'フォンテーヌ', layers: { main: { name: 'フォンテーヌマップ', image: 'image/placeholder.png', bounds: [[0, 0], [1626, 2703]] } } } }
     },
     natlan: {
         areas: { natlan: { name: 'ナタ', layers: { main: { name: 'ナタマップ', image: 'image/placeholder.png', bounds: [[0, 0], [1626, 2703]] } } } }
@@ -70,7 +70,6 @@ const baseIcons = {
     '炎神瞳': { url: 'image/enjin.png', size: [48, 48], anchor: [24, 24] },
     'チャレンジ': { url: 'image/challenge.png', size: [48, 48], anchor: [24, 24] },
     '仙霊': { url: 'image/senrei.png', size: [48, 48], anchor: [24, 24] },
-    '元素石碑': { url: 'image/sekihi.png', size: [48, 48], anchor: [24, 24] },
     '立方体': { url: 'image/square.png', size: [48, 48], anchor: [24, 24] },
     '鍵紋1': { url: 'image/key1.png', size: [48, 48], anchor: [24, 24] },
     '鍵紋2': { url: 'image/key2.png', size: [48, 48], anchor: [24, 24] },
@@ -78,11 +77,14 @@ const baseIcons = {
     '鍵紋4': { url: 'image/key4.png', size: [48, 48], anchor: [24, 24] },
     '鍵紋5': { url: 'image/key5.png', size: [48, 48], anchor: [24, 24] },
     '雷霊': { url: 'image/rairei.png', size: [48, 48], anchor: [24, 24] },
+
     'アランナラ': { url: 'image/arannara.png', size: [48, 48], anchor: [24, 24] },
     'スメールギミック': { url: 'image/SGimmick.png', size: [48, 48], anchor: [24, 24] },
-    'リーフコア': { url: 'image/leaf.png', size: [48, 48], anchor: [24, 24] },
-    '短火装置': { url: 'image/dai.png', size: [48, 48], anchor: [24, 24] },
+    '元素石碑': { url: 'image/sekihi.png', size: [48, 48], anchor: [24, 24] },
+    '短石碑': { url: 'image/dai.png', size: [48, 48], anchor: [24, 24] },
     '死域': { url: 'image/shiki.png', size: [48, 48], anchor: [24, 24] },
+    'リーフコア': { url: 'image/leaf.png', size: [48, 48], anchor: [24, 24] },
+
     '普通の宝箱': { url: 'image/hutu.png', size: [48, 48], anchor: [24, 24] },
     '精巧な宝箱': { url: 'image/seikou.png', size: [48, 48], anchor: [24, 24] },
     '貴重な宝箱': { url: 'image/kityou.png', size: [48, 48], anchor: [24, 24] },
@@ -203,11 +205,9 @@ function updateCounts() {
                 const categories = [];
                 pointsOfType.forEach(p => {
                     const flags = [];
-
                     if (p.isUnderground) flags.push('地下');
                     if (p.isSeirei) flags.push('仙');
                     if (p.isChallenge) flags.push('チャレンジ');
-
                     const key = flags.length ? flags.join(', ') : '地上';
                     typeCounts[`${type}_${key}`] = (typeCounts[`${type}_${key}`] || 0) + 1;
                 });
@@ -293,7 +293,6 @@ function renderPoints() {
                 if (point.isUnderground) flags.push('地下');
                 if (point.isSeirei) flags.push('仙');
                 if (point.isChallenge) flags.push('チャレンジ');
-
                 const flagText = flags.length ? ` (${flags.join(', ')})` : '';
                 const popupContent = `
                     <b>${point.type}${flagText}</b><br>
