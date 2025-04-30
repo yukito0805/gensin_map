@@ -388,24 +388,6 @@ body {
     transform: scale(var(--scale, 1));
 }
 
-.Kanryou-marker::after {
-    content: 'P';
-    position: absolute;
-    bottom: 0;
-    right: 40px;
-    background: #FF4040;
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform: scale(var(--scale, 1));
-}
-
 /* モバイル/タブレット対応 */
 @media (max-width: 1024px) {
     .modal-content {
@@ -456,23 +438,4 @@ body {
     #drawer {
         width: 200px;
     }
-}
-.filter-sidebar {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    background: #fff;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-    max-height: 80vh;
-    overflow-y: auto;
-}
-.filter-sidebar h3 {
-    margin: 0 0 10px;
-    font-size: 16px;
-}
-.filter-sidebar label {
-    display: block;
-    margin: 5px 0;
 }
