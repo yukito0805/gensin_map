@@ -1,10 +1,11 @@
 // マップの初期化
 const map = L.map('map', {
-    crs: L.CRS.Simple,
-    minZoom: -5,
-    maxZoom: 5,
-    renderer: L.canvas()
+  crs: L.CRS.EPSG4326, // 例: スメールがEPSG:4326を使用している場合
+  minZoom: -5,
+  maxZoom: 5,
+  renderer: L.canvas()
 });
+
 
 map.on('click', function(e) {
   const latlng = map.mouseEventToLatLng(e.originalEvent);
