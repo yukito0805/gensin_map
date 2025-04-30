@@ -57,8 +57,7 @@
         <label><input type="checkbox" value="貴重な宝箱" checked onchange="updateCounts()"> 貴重な宝箱</label>
         <label><input type="checkbox" value="豪華な宝箱" checked onchange="updateCounts()"> 豪華な宝箱</label>
         <label><input type="checkbox" value="珍奇な宝箱" checked onchange="updateCounts()"> 珍奇な宝箱</label>
-        
-<h3>ピンの数</h3>
+        <h3>ピンの数</h3>
         <div id="counts"></div>
         <h3>データ管理</h3>
         <button onclick="exportPoints()">エクスポート</button>
@@ -119,11 +118,6 @@
                         <span>仙霊</span>
                     </label>
                     <label class="icon-option">
-                        <input type="radio" name="type" value="元素石碑">
-                        <img src="image/sekihi.png" alt="仙霊" width="80">
-                        <span>元素石碑</span>
-                    </label>
-                    <label class="icon-option">
                         <input type="radio" name="type" value="立方体">
                         <img src="image/square.png" alt="立方体" width="80">
                         <span>立方体</span>
@@ -159,13 +153,11 @@
                         <span>雷霊</span>
                     </label>
 
-
                     <label class="icon-option">
                         <input type="radio" name="type" value="アランナラ">
                         <img src="image/arannara.png" alt="アランナラ" width="80">
                         <span>アランナラ</span>
                     </label>
-
 
                     <label class="icon-option">
                         <input type="radio" name="type" value="スメールギミック">
@@ -174,21 +166,27 @@
                     </label>
 
                     <label class="icon-option">
-                        <input type="radio" name="type" value="リーフコア">
-                        <img src="image/leaf.png" alt="リーフコア" width="80">
-                        <span>リーフコア</span>
+                        <input type="radio" name="type" value="元素石碑">
+                        <img src="image/sekihi.png" alt="元素石碑" width="80">
+                        <span>元素石碑</span>
                     </label>
 
                     <label class="icon-option">
-                        <input type="radio" name="type" value="短火装置">
-                        <img src="image/dai.png" alt="短火装置" width="80">
-                        <span>短火装置</span>
+                        <input type="radio" name="type" value="短火石碑">
+                        <img src="image/dai.png" alt="短火石碑" width="80">
+                        <span>短火石碑</span>
                     </label>
 
                     <label class="icon-option">
                         <input type="radio" name="type" value="死域">
                         <img src="image/shiki.png" alt="死域" width="80">
                         <span>死域</span>
+                    </label>
+
+                    <label class="icon-option">
+                        <input type="radio" name="type" value="リーフコア">
+                        <img src="image/leaf.png" alt="リーフコア" width="80">
+                        <span>リーフコア</span>
                     </label>
 
                     <label class="icon-option">
@@ -218,12 +216,9 @@
                     </label>
                 </div>
                 <div class="checkbox-group">
-
                     <label><input type="checkbox" id="isUnderground" name="isUnderground"> 地下アイテム</label>
                     <label><input type="checkbox" id="isSeirei" name="isSeirei"> 仙（仙霊）</label>
                     <label><input type="checkbox" id="isChallenge" name="isChallenge"> チャレンジ</label>
-                    <label><input type="checkbox" id="isKanryou" name="isKanryou"> 完了</label>
-
                 </div>
                 <label for="description">説明:</label>
                 <textarea id="description" name="description"></textarea><br>
