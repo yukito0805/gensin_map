@@ -31,7 +31,7 @@ const maps = {
                     underground2: { name: '鶴見地下2', image: 'image/turumichika2.png', bounds: [[0, 0], [921, 1320]] }
                 }
             },
-            enkanomiya: { name: '淵下宮', layers: { main: { name: '淵下宮マップ', image: 'image/enkanomiya.png', bounds: [[0, 0], [1714, 2231]] } } },
+            enkanomiya: { name: '淵下宮', layers: { main: { name: '淵下宮マップ', image: 'image/enkanomiya.png', bounds: [[0, 0], [2231, 1714]] } } },
             yathimata: { name: '八衢彦の地', layers: { main: { name: '八衢彦の地マップ', image: 'image/yathimata.png', bounds: [[0, 0], [1474, 1781]] } } },
             yathimata2: { name: '八衢姫の地', layers: { main: { name: '八衢姫の地マップ', image: 'image/yathimata2.png', bounds: [[0, 0], [1430, 1248]] } } },
             kunado: { name: '岐の地', layers: { main: { name: '岐の地マップ', image: 'image/kunado.png', bounds: [[0, 0], [998, 1181]] } } }
