@@ -82,8 +82,8 @@ const maps = {
                 layers: {
                     main: {
                         name: 'スメールマップ',
-                        image: 'image/sumeru_P0_highres.png',
-                        bounds: [[0, 0], [5578, 5543]]
+                        image: 'image/sumeru_map.png',
+                        bounds: [[0, 0], [5376, 5376]]
                     }
                 }
             }
