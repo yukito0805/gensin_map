@@ -3,63 +3,26 @@ const map = L.map('map', {
     crs: L.CRS.Simple,
     minZoom: -5,
     maxZoom: 5,
-    renderer: L.canvas() // Safariでのレンダリング安定化
+    renderer: L.canvas()
 });
 
 // マップ定義
 const maps = {
     mondstadt: {
         areas: {
-            mondstadt: {
-                name: 'モンド',
-                layers: {
-                    main: { name: 'モンドマップ', image: 'image/mond.png', bounds: [[0, 0], [1626, 2703]] }
-                }
-            },
-            dragonspine: {
-                name: 'ドラゴンスパイン',
-                layers: {
-                    main: { name: 'ドラゴンスパインマップ', image: 'image/placeholder.png', bounds: [[0, 0], [1626, 2703]] }
-                }
-            }
+            mondstadt: { name: 'モンド', layers: { main: { name: 'モンドマップ', image: 'image/mond.png', bounds: [[0, 0], [1626, 2703]] } } },
+            dragonspine: { name: 'ドラゴンスパイン', layers: { main: { name: 'ドラゴンスパインマップ', image: 'image/placeholder.png', bounds: [[0, 0], [1626, 2703]] } } }
         }
     },
     liyue: {
-        areas: {
-            liyue: {
-                name: '璃月',
-                layers: {
-                    main: { name: '璃月マップ', image: 'image/placeholder.png', bounds: [[0, 0], [1626, 2703]] }
-                }
-            }
-        }
+        areas: { liyue: { name: '璃月', layers: { main: { name: '璃月マップ', image: 'image/placeholder.png', bounds: [[0, 0], [1626, 2703]] } } } }
     },
     inazuma: {
         areas: {
-            inazuma1: {
-                name: '稲妻1',
-                layers: {
-                    main: { name: '稲妻1マップ', image: 'image/inazuma1.png', bounds: [[0, 0], [3190, 3000]] }
-                }
-            },
-            inazuma2: {
-                name: '稲妻2',
-                layers: {
-                    main: { name: '稲妻2マップ', image: 'image/inazuma2.png', bounds: [[0, 0], [2140, 3970]] }
-                }
-            },
-            tenkumo: {
-                name: '天雲峠',
-                layers: {
-                    main: { name: '天雲峠マップ', image: 'image/amakumo.png', bounds: [[0, 0], [1715, 2231]] }
-                }
-            },
-            kaigishima: {
-                name: '海祇島',
-                layers: {
-                    main: { name: '海祇島マップ', image: 'image/sangonomiya.png', bounds: [[0, 0], [1519, 2262]] }
-                }
-            },
+            inazuma1: { name: '稲妻1', layers: { main: { name: '稲妻1マップ', image: 'image/inazuma1.png', bounds: [[0, 0], [3190, 3000]] } } },
+            inazuma2: { name: '稲妻2', layers: { main: { name: '稲妻2マップ', image: 'image/inazuma2.png', bounds: [[0, 0], [2140, 3970]] } } },
+            tenkumo: { name: '天雲峠', layers: { main: { name: '天雲峠マップ', image: 'image/amakumo.png', bounds: [[0, 0], [1715, 2231]] } } },
+            kaigishima: { name: '海祇島', layers: { main: { name: '海祇島マップ', image: 'image/sangonomiya.png', bounds: [[0, 0], [1519, 2262]] } } },
             tsumei: {
                 name: '鶴見',
                 layers: {
@@ -68,61 +31,26 @@ const maps = {
                     underground2: { name: '鶴見地下2', image: 'image/turumichika2.png', bounds: [[0, 0], [921, 1320]] }
                 }
             },
-            enkanomiya: {
-                name: '淵下宮',
-                layers: {
-                    main: { name: '淵下宮マップ', image: 'image/enkanomiya.png', bounds: [[0, 0], [2094, 3065]] }
-                }
-            },
-            yathimata: {
-                name: '八衢彦の地',
-                layers: {
-                    main: { name: '八衢彦の地マップ', image: 'image/yathimata.png', bounds: [[0, 0], [1474, 1781]] }
-                }
-            },
-            yathimata2: {
-                name: '八衢姫の地',
-                layers: {
-                    main: { name: '八衢姫の地マップ', image: 'image/yathimata2.png', bounds: [[0, 0], [1430, 1248]] }
-                }
-            },
-            kunado: {
-                name: '岐の地',
-                layers: {
-                    main: { name: '岐の地マップ', image: 'image/kunado.png', bounds: [[0, 0], [998, 1181]] }
-                }
-            }
+            enkanomiya: { name: '淵下宮', layers: { main: { name: '淵下宮マップ', image: 'image/enkanomiya.png', bounds: [[0, 0], [2094, 3065]] } } },
+            yathimata: { name: '八衢彦の地', layers: { main: { name: '八衢彦の地マップ', image: 'image/yathimata.png', bounds: [[0, 0], [1474, 1781]] } } },
+            yathimata2: { name: '八衢姫の地', layers: { main: { name: '八衢姫の地マップ', image: 'image/yathimata2.png', bounds: [[0, 0], [1430, 1248]] } } },
+            kunado: { name: '岐の地', layers: { main: { name: '岐の地マップ', image: 'image/kunado.png', bounds: [[0, 0], [998, 1181]] } } }
         }
     },
-    sumeru: {
-        areas: {
             sumeru: {
-                name: 'スメール',
-                layers: {
-                    main: { name: 'スメールマップ', image: 'image/placeholder.png', bounds: [[0, 0], [1626, 2703]] }
-                }
-            }
+        areas: {
+            sumeru: { name: 'スメール', layers: { main: { name: 'スメールマップ', image: 'image/sumeru1.png', bounds: [[0, 0], [1761, 2252]] } } },
+            sumeru2: { name: 'スメール2', layers: { main: { name: 'スメール2', image: 'image/sumeru2.png', bounds: [[0, 0], [1778, 2328]] } } },
+            sumeru3: { name: 'スメール3', layers: { main: { name: 'スメール3', image: 'image/sumeru3.png', bounds: [[0, 0], [1781, 2586]] } } },
+            sumeru4: { name: 'スメール4', layers: { main: { name: 'スメール4', image: 'image/sumeru5.png', bounds: [[0, 0], [1778, 2636]] } } },
+            sumeru5: { name: 'スメール5', layers: { main: { name: 'スメール5', image: 'image/sumeru6.png', bounds: [[0, 0], [1791, 2758]] } } },
         }
     },
     fontaine: {
-        areas: {
-            fontaine: {
-                name: 'フォンテーヌ',
-                layers: {
-                    main: { name: 'フォンテーヌマップ', image: 'image/placeholder.png', bounds: [[0, 0], [1626, 2703]] }
-                }
-            }
-        }
+        areas: { fontaine: { name: 'フォンテーヌ', layers: { main: { name: 'フォンテーヌマップ', image: 'image/placeholder.png', bounds: [[0, 0], [2252, 1761]] } } } }
     },
     natlan: {
-        areas: {
-            natlan: {
-                name: 'ナタ',
-                layers: {
-                    main: { name: 'ナタマップ', image: 'image/placeholder.png', bounds: [[0, 0], [1626, 2703]] }
-                }
-            }
-        }
+        areas: { natlan: { name: 'ナタ', layers: { main: { name: 'ナタマップ', image: 'image/placeholder.png', bounds: [[0, 0], [1626, 2703]] } } } }
     }
 };
 
@@ -132,7 +60,7 @@ let currentMapId = 'mondstadt_mondstadt_main';
 let layerControl = null;
 let currentLayers = {};
 
-// ピンのアイコン定義（ベースサイズ）
+// ピンのアイコン定義
 const baseIcons = {
     '風神瞳': { url: 'image/hujin.jpg', size: [48, 48], anchor: [24, 24] },
     '岩神瞳': { url: 'image/iwagami.jpg', size: [48, 48], anchor: [24, 24] },
@@ -142,6 +70,7 @@ const baseIcons = {
     '炎神瞳': { url: 'image/enjin.png', size: [48, 48], anchor: [24, 24] },
     'チャレンジ': { url: 'image/challenge.png', size: [48, 48], anchor: [24, 24] },
     '仙霊': { url: 'image/senrei.png', size: [48, 48], anchor: [24, 24] },
+    '元素石碑': { url: 'image/sekihi.png', size: [48, 48], anchor: [24, 24] },
     '立方体': { url: 'image/square.png', size: [48, 48], anchor: [24, 24] },
     '鍵紋1': { url: 'image/key1.png', size: [48, 48], anchor: [24, 24] },
     '鍵紋2': { url: 'image/key2.png', size: [48, 48], anchor: [24, 24] },
@@ -149,19 +78,22 @@ const baseIcons = {
     '鍵紋4': { url: 'image/key4.png', size: [48, 48], anchor: [24, 24] },
     '鍵紋5': { url: 'image/key5.png', size: [48, 48], anchor: [24, 24] },
     '雷霊': { url: 'image/rairei.png', size: [48, 48], anchor: [24, 24] },
+    'アランナラ': { url: 'image/arannara.png', size: [48, 48], anchor: [24, 24] },
+    'スメールギミック': { url: 'image/SGimmick.png', size: [48, 48], anchor: [24, 24] },
+    'リーフコア': { url: 'image/leaf.png', size: [48, 48], anchor: [24, 24] },
+    '短火装置': { url: 'image/dai.png', size: [48, 48], anchor: [24, 24] },
+    '死域': { url: 'image/shiki.png', size: [48, 48], anchor: [24, 24] },
     '普通の宝箱': { url: 'image/hutu.png', size: [48, 48], anchor: [24, 24] },
     '精巧な宝箱': { url: 'image/seikou.png', size: [48, 48], anchor: [24, 24] },
     '貴重な宝箱': { url: 'image/kityou.png', size: [48, 48], anchor: [24, 24] },
     '豪華な宝箱': { url: 'image/gouka.png', size: [48, 48], anchor: [24, 24] },
-    '珍奇な宝箱': { url: 'image/tinki.png', size: [48, 48
-
-], anchor: [24, 24] }
+    '珍奇な宝箱': { url: 'image/tinki.png', size: [48, 48], anchor: [24, 24] }
 };
 
 // 動的アイコン生成
-function getIcon(type, zoom) {
+function getIcon(type, zoom, flags = {}) {
     const base = baseIcons[type];
-    const scale = 1 + (zoom / 10); // ズーム-5で0.5、ズーム0で1、ズーム5で1.5
+    const scale = 1 + (zoom / 10);
     const size = [
         Math.max(16, Math.min(96, base.size[0] * scale)),
         Math.max(16, Math.min(96, base.size[1] * scale))
@@ -170,8 +102,19 @@ function getIcon(type, zoom) {
         Math.max(8, Math.min(48, base.anchor[0] * scale)),
         Math.max(8, Math.min(48, base.anchor[1] * scale))
     ];
-    return L.icon({
-        iconUrl: base.url,
+    const classes = [
+        'marker-container',
+        flags.isUnderground ? 'underground-marker' : '',
+        flags.isSeirei ? 'seirei-marker' : '',
+        flags.isChallenge ? 'challenge-marker' : ''
+    ].filter(Boolean).join(' ');
+    return L.divIcon({
+        className: classes,
+        html: `
+            <div style="--scale: ${scale}">
+                <img src="${base.url}" style="width: ${size[0]}px; height: ${size[1]}px;">
+            </div>
+        `,
         iconSize: size,
         iconAnchor: anchor
     });
@@ -219,7 +162,10 @@ window.importPoints = function(event) {
                     validTypes.includes(point.type) &&
                     Array.isArray(point.coords) && point.coords.length === 2 &&
                     (point.description === undefined || typeof point.description === 'string') &&
-                    (point.youtubeUrl === undefined || typeof point.youtubeUrl === 'string')
+                    (point.youtubeUrl === undefined || typeof point.youtubeUrl === 'string') &&
+                    (point.isUnderground === undefined || typeof point.isUnderground === 'boolean') &&
+                    (point.isSeirei === undefined || typeof point.isSeirei === 'boolean') &&
+                    (point.isChallenge === undefined || typeof point.isChallenge === 'boolean')
                 );
             });
 
@@ -251,8 +197,20 @@ function updateCounts() {
             const areaName = maps[region].areas[area].name;
             const areaPoints = points.filter(p => p.mapId.startsWith(`${region}_${area}_`) && selectedTypes.includes(p.type));
             const typeCounts = {};
+
             selectedTypes.forEach(type => {
-                typeCounts[type] = areaPoints.filter(p => p.type === type).length;
+                const pointsOfType = areaPoints.filter(p => p.type === type);
+                const categories = [];
+                pointsOfType.forEach(p => {
+                    const flags = [];
+
+                    if (p.isUnderground) flags.push('地下');
+                    if (p.isSeirei) flags.push('仙');
+                    if (p.isChallenge) flags.push('チャレンジ');
+
+                    const key = flags.length ? flags.join(', ') : '地上';
+                    typeCounts[`${type}_${key}`] = (typeCounts[`${type}_${key}`] || 0) + 1;
+                });
             });
 
             const chestTotal = points
@@ -260,10 +218,9 @@ function updateCounts() {
                 .reduce((sum, p) => sum + (chestPoints[p.type] || 0), 0);
 
             html += `<p><b>${areaName}</b>:</p>`;
-            selectedTypes.forEach(type => {
-                if (typeCounts[type] > 0) {
-                    html += `<p>${type}: ${typeCounts[type]}</p>`;
-                }
+            Object.keys(typeCounts).forEach(key => {
+                const [type, category] = key.split('_');
+                html += `<p>${type} (${category}): ${typeCounts[key]}</p>`;
             });
             if (chestTotal > 0) {
                 html += `<p>印: ${chestTotal}</p>`;
@@ -324,12 +281,23 @@ function renderPoints() {
         if (point.mapId === currentMapId && selectedTypes.includes(point.type)) {
             try {
                 const marker = L.marker(point.coords, {
-                    icon: getIcon(point.type, zoom),
+                    icon: getIcon(point.type, zoom, {
+                        isUnderground: point.isUnderground,
+                        isSeirei: point.isSeirei,
+                        isChallenge: point.isChallenge
+                    }),
                     type: point.type,
                     mapId: point.mapId
                 }).addTo(map);
+                const flags = [];
+                if (point.isUnderground) flags.push('地下');
+                if (point.isSeirei) flags.push('仙');
+                if (point.isChallenge) flags.push('チャレンジ');
+
+                const flagText = flags.length ? ` (${flags.join(', ')})` : '';
                 const popupContent = `
-                    <b>${point.type}</b><br>${point.description || '（説明なし）'}
+                    <b>${point.type}${flagText}</b><br>
+                    ${point.description || '（説明なし）'}
                     <br><button class="edit" onclick="editPoint(${point.id})">編集</button>
                     <button onclick="deletePoint(${point.id})">削除</button>
                 `;
@@ -363,7 +331,6 @@ closeDrawer.addEventListener('click', () => {
     drawer.classList.remove('open');
 });
 
-// ドロワーの外をクリック/タッチで閉じる
 window.addEventListener('click', (event) => {
     if (drawer.classList.contains('open') && !drawer.contains(event.target) && !toggleDrawer.contains(event.target)) {
         drawer.classList.remove('open');
@@ -405,7 +372,6 @@ function updateLayerSelect(region, area) {
     }
 }
 
-// 地域選択
 regionSelect.addEventListener('change', () => {
     const region = regionSelect.value;
     updateAreaSelect(region);
@@ -414,7 +380,6 @@ regionSelect.addEventListener('change', () => {
     switchMap(region, area);
 });
 
-// エリア選択
 areaSelect.addEventListener('change', () => {
     const region = regionSelect.value;
     const area = areaSelect.value;
@@ -423,7 +388,6 @@ areaSelect.addEventListener('change', () => {
     switchMap(region, area, layerId);
 });
 
-// レイヤー選択
 layerSelect.addEventListener('change', () => {
     const region = regionSelect.value;
     const area = areaSelect.value;
@@ -431,7 +395,6 @@ layerSelect.addEventListener('change', () => {
     switchMap(region, area, layerId);
 });
 
-// 初期マップ（モンド：モンド）
 try {
     updateAreaSelect('mondstadt');
     updateLayerSelect('mondstadt', 'mondstadt');
@@ -460,6 +423,9 @@ window.editPoint = function(id) {
     }, 100);
     document.getElementById('modalTitle').textContent = 'ピンを編集';
     document.querySelector(`input[name="type"][value="${point.type}"]`).checked = true;
+    document.getElementById('isUnderground').checked = point.isUnderground || false;
+    document.getElementById('isSeirei').checked = point.isSeirei || false;
+    document.getElementById('isChallenge').checked = point.isChallenge || false;
     document.getElementById('description').value = point.description || '';
     document.getElementById('youtubeUrl').value = point.youtubeUrl ? point.youtubeUrl.replace('embed/', 'watch?v=') : '';
     tempCoords = point.coords;
@@ -477,6 +443,9 @@ window.editPoint = function(id) {
             mapId: currentMapId,
             type: document.querySelector('input[name="type"]:checked').value,
             coords: tempCoords,
+            isUnderground: document.getElementById('isUnderground').checked,
+            isSeirei: document.getElementById('isSeirei').checked,
+            isChallenge: document.getElementById('isChallenge').checked,
             description: document.getElementById('description').value || '',
             youtubeUrl: youtubeUrl ? youtubeUrl.replace('watch?v=', 'embed/') : ''
         };
@@ -502,6 +471,9 @@ const addPointHandler = function(e) {
         mapId: currentMapId,
         type: document.querySelector('input[name="type"]:checked').value,
         coords: tempCoords,
+        isUnderground: document.getElementById('isUnderground').checked,
+        isSeirei: document.getElementById('isSeirei').checked,
+        isChallenge: document.getElementById('isChallenge').checked,
         description: document.getElementById('description').value || '',
         youtubeUrl: youtubeUrl ? youtubeUrl.replace('watch?v=', 'embed/') : ''
     };
@@ -528,6 +500,9 @@ map.on('click touchend', e => {
     document.getElementById('modalTitle').textContent = 'ピンを追加';
     pinForm.reset();
     document.querySelector('input[name="type"][value="風神瞳"]').checked = true;
+    document.getElementById('isUnderground').checked = false;
+    document.getElementById('isSeirei').checked = false;
+    document.getElementById('isChallenge').checked = false;
     pinForm.onsubmit = addPointHandler;
 });
 
@@ -571,7 +546,6 @@ function closePinModal() {
 pinClose.onclick = closePinModal;
 pinClose.addEventListener('touchend', closePinModal);
 
-// モーダルの外をクリック/タッチで閉じる
 window.onclick = function(event) {
     if (event.target == videoModal) {
         videoModal.style.display = 'none';
