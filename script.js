@@ -1,455 +1,672 @@
-/* 全体のスタイル */
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    overflow: hidden;
-}
+// マップの初期化
+const map = L.map('map', {
+    crs: L.CRS.Simple,
+    minZoom: -5,
+    maxZoom: 5,
+    renderer: L.canvas()
+});
 
-/* マップコンテナ */
-#map {
-    height: 100vh;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-}
+// ← この直後に追加
+map.on('click', function(e) {
+  console.log('クリック位置:', e.latlng);
+});
 
-/* コントロールパネル */
-#controls {
-    position: fixed;
-    top: 70px;
-    left: 10px;
-    z-index: 1001;
-    background: #fff;
-    padding: 10px;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.3);
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-#controls label {
-    font-weight: bold;
-}
-
-#controls select {
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-#toggleDrawer {
-    background: #4CAF50;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 18px;
-    touch-action: manipulation;
-}
-
-#toggleDrawer:hover {
-    background: #45a049;
-}
-
-/* ドロワーメニュー */
-#drawer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1001;
-    background: #fff;
-    padding: 20px;
-    border-right: 1px solid #ccc;
-    width: 250px;
-    height: 100%;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
-#drawer.open {
-    transform: translateX(0);
-}
-
-#drawer #closeDrawer {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: #f44336;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    touch-action: manipulation;
-}
-
-#drawer #closeDrawer:hover {
-    background: #d32f2f;
-}
-
-#drawer h3 {
-    margin: 0 0 10px;
-    font-size: 16px;
-}
-
-#drawer label {
-    display: block;
-    margin: 5px 0;
-}
-
-#drawer #counts {
-    margin-top: 10px;
-    font-size: 14px;
-}
-
-#drawer #counts p {
-    margin: 5px 0;
-}
-
-#drawer button, #drawer input[type="file"] {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    touch-action: manipulation;
-}
-
-#drawer button {
-    background: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-#drawer button:hover {
-    background: #45a049;
-}
-
-/* モーダル（共通） */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1002;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-    -webkit-backdrop-filter: blur(2px);
-    backdrop-filter: blur(2px);
-}
-
-.modal-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    position: relative;
-    max-width: 700px;
-    width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
-.close {
-    position: absolute;
-    right: 20px;
-    top: 10px;
-    font-size: 24px;
-    cursor: pointer;
-    color: #333;
-    touch-action: manipulation;
-}
-
-/* ピン追加/編集フォーム */
-#pinForm {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-#pinForm label {
-    font-weight: bold;
-}
-
-#pinForm textarea,
-#pinForm input[type="url"],
-#pinForm input[type="checkbox"] {
-    padding: 8px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-#pinForm textarea {
-    width: 100%;
-    height: 80px;
-    resize: vertical;
-}
-
-.checkbox-group {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 15px;
-    align-items: center;
-}
-
-.checkbox-group label {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-weight: normal;
-    white-space: nowrap;
-}
-
-.checkbox-group input[type="checkbox"] {
-    width: auto;
-    margin: 0;
-}
-
-/* アイコン選択 */
-.icon-selector {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 10px;
-    margin: 10px 0;
-}
-
-.icon-option {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 5px;
-    border: 2px solid transparent;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: border-color 0.2s;
-    min-width: 100px;
-    touch-action: manipulation;
-}
-
-.icon-option input[type="radio"] {
-    display: none;
-}
-
-.icon-option img {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
-}
-
-.icon-option span {
-    margin-top: 5px;
-    font-size: 14px;
-    text-align: center;
-}
-
-.icon-option input:checked + img {
-    border: 2px solid #4CAF50;
-    border-radius: 5px;
-}
-
-.icon-option:hover {
-    border-color: #ccc;
-}
-
-.icon-option.empty {
-    border: none;
-    cursor: default;
-}
-
-/* フォームボタン */
-.form-buttons {
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-}
-
-#pinForm button[type="submit"] {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    touch-action: manipulation;
-}
-
-#pinForm button[type="submit"]:hover {
-    background-color: #45a049;
-}
-
-#pinForm button#cancelButton {
-    background-color: #f44336;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    touch-action: manipulation;
-}
-
-#pinForm button#cancelButton:hover {
-    background-color: #d32f2f;
-}
-
-/* ピンのポップアップボタン */
-.leaflet-popup-content button {
-    background-color: #f44336;
-    color: white;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-    margin: 5px 5px 0 0;
-    touch-action: manipulation;
-}
-
-.leaflet-popup-content button.edit {
-    background-color: #2196F3;
-}
-
-.leaflet-popup-content button:hover {
-    background-color: #d32f2f;
-}
-
-.leaflet-popup-content button.edit:hover {
-    background-color: #1976D2;
-}
-
-/* ピンのマーカー */
-.marker-container {
-    position: relative;
-}
-
-.marker-container {
-    position: relative;
-}
-
-.underground-marker::after {
-    content: 'U';
-    position: absolute;
-    bottom: 0;
-    right: 0; /* 統一 */
-    background: #FF0000;
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform: none; /* スケール削除 */
-    z-index: 10;
-}
-
-.seirei-marker::after {
-    content: 'S';
-    position: absolute;
-    bottom: 20px; /* 垂直にずらす */
-    right: 0; /* 統一 */
-    background: #00B7EB;
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform: none; /* スケール削除 */
-    z-index: 10;
-}
-
-.challenge-marker::after {
-    content: 'C';
-    position: absolute;
-    bottom: 40px; /* 垂直にずらす */
-    right: 0; /* 統一 */
-    background: #FF4040;
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform: none; /* スケール削除 */
-    z-index: 10;
-}
-
-.marker-container img {
-    display: block; /* インラインマージン防止 */
-    position: relative;
-    top: 0;
-    left: 0;
-}
-
-/* モバイル/タブレット対応 */
-@media (max-width: 1024px) {
-    .modal-content {
-        width: 95%;
+// マップ定義
+const maps = {
+    mondstadt: {
+        areas: {
+            mondstadt: {
+                name: 'モンド',
+                layers: {
+                    main: {
+                        name: 'モンドマップ',
+                        image: 'image/mondstadt.png',
+                        bounds: [[0, 0], [2765, 3878]]
+                    }
+                }
+            }
+        }
+    },
+    liyue: {
+        areas: {
+            liyue: {
+                name: '璃月',
+                layers: {
+                    main: {
+                        name: '璃月マップ',
+                        image: 'image/liyue.png',
+                        bounds: [[0, 0], [4169, 4571]]
+                    }
+                }
+            },
+            chasm: {
+                name: '層岩巨淵',
+                layers: {
+                    main: {
+                        name: '層岩巨淵マップ',
+                        image: 'image/natlan_P0.png',
+                        bounds: [[0, 0], [1677, 1893]]
+                    }
+                }
+            }
+        }
+    },
+    inazuma: {
+        areas: {
+            inazuma1: {
+                name: '稲妻',
+                layers: {
+                    main: {
+                        name: '稲妻マップ',
+                        image: 'image/inazuma1_P0.png',
+                        bounds: [[0, 0], [5568, 6018]]
+                    }
+                }
+            },
+            enkanomiya: {
+                name: '淵下宮',
+                layers: {
+                    main: {
+                        name: '淵下宮マップ',
+                        image: 'image/inazuma_P0.png',
+                        bounds: [[0, 0], [3018, 3171]]
+                    }
+                }
+            }
+        }
+    },
+    sumeru: {
+        areas: {
+            sumeru: {
+                name: 'スメール',
+                layers: {
+                    main: {
+                        name: 'スメールマップ',
+                        image: 'image/sumeru_P0_highres.png',
+                        bounds: [[0, 0], [5578, 5543]]
+                    }
+                }
+            }
+        }
+    },
+    fontaine: {
+        areas: {
+            fontaine: {
+                name: 'フォンテーヌ',
+                layers: {
+                    main: {
+                        name: 'フォンテーヌマップ',
+                        image: 'image/fontaine_map.png',
+                        bounds: [[0, 0], [4356, 3175]]
+                    }
+                }
+            },
+            seaofpast: {
+                name: '往日の海',
+                layers: {
+                    main: {
+                        name: '往日の海マップ',
+                        image: 'image/map34_P0.png',
+                        bounds: [[0, 0], [1014, 1998]]
+                    }
+                }
+            }
+        }
+    },
+    natlan: {
+        areas: {
+            natlan: {
+                name: 'ナタ',
+                layers: {
+                    main: {
+                        name: 'ナタマップ',
+                        image: 'image/natlan_N1.png',
+                        bounds: [[0, 0], [5896, 5432]]
+                    }
+                }
+            },
+            holy_mountain: {
+                name: '古の聖山',
+                layers: {
+                    main: {
+                        name: '古の聖山マップ',
+                        image: 'image/map36_P0.png',
+                        bounds: [[0, 0], [3117, 2634]]
+                    }
+                }
+            }
+        }
     }
-    iframe {
-        width: 100%;
-        height: 200px;
-    }
-    .form-buttons {
-        flex-direction: column;
-        gap: 5px;
-    }
-    .icon-selector {
-        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-        gap: 8px;
-    }
-    .icon-option img {
-        width: 60px;
-        height: 60px;
-    }
-    .icon-option span {
-        font-size: 12px;
-    }
-    .underground-marker::after,
-    .seirei-marker::after,
-    .challenge-marker::after {
-        font-size: 10px;
-        width: 12px;
-        height: 12px;
-    }
-    .seirei-marker::after {
-        right: 15px;
-    }
-    .challenge-marker::after {
-        right: 30px;
-    }
-    .checkbox-group {
-        gap: 10px;
-    }
-    .checkbox-group label {
-        font-size: 14px;
-    }
-    #controls {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    #drawer {
-        width: 200px;
+};
+
+
+
+
+// ピンのデータ管理
+let points = JSON.parse(localStorage.getItem('genshinPoints')) || [];
+let currentMapId = 'mondstadt_mondstadt_main';
+let layerControl = null;
+let currentLayers = {};
+
+// ピンのアイコン定義
+const baseIcons = {
+    '風神瞳': { url: 'image/hujin.jpg', size: [48, 48], anchor: [24, 24] },
+    '岩神瞳': { url: 'image/iwagami.jpg', size: [48, 48], anchor: [24, 24] },
+    '電神瞳': { url: 'image/inazumahitomi.png', size: [48, 48], anchor: [24, 24] },
+    '草神瞳': { url: 'image/sousin.png', size: [48, 48], anchor: [24, 24] },
+    '水神瞳': { url: 'image/suijin.png', size: [48, 48], anchor: [24, 24] },
+    '炎神瞳': { url: 'image/enjin.png', size: [48, 48], anchor: [24, 24] },
+    'チャレンジ': { url: 'image/challenge.png', size: [48, 48], anchor: [24, 24] },
+    '仙霊': { url: 'image/senrei.png', size: [48, 48], anchor: [24, 24] },
+    '立方体': { url: 'image/square.png', size: [48, 48], anchor: [24, 24] },
+    '鍵紋1': { url: 'image/key1.png', size: [48, 48], anchor: [24, 24] },
+    '鍵紋2': { url: 'image/key2.png', size: [48, 48], anchor: [24, 24] },
+    '鍵紋3': { url: 'image/key3.png', size: [48, 48], anchor: [24, 24] },
+    '鍵紋4': { url: 'image/key4.png', size: [48, 48], anchor: [24, 24] },
+    '鍵紋5': { url: 'image/key5.png', size: [48, 48], anchor: [24, 24] },
+    '雷霊': { url: 'image/rairei.png', size: [48, 48], anchor: [24, 24] },
+
+    'アランナラ': { url: 'image/arannara.png', size: [48, 48], anchor: [24, 24] },
+    'スメールギミック': { url: 'image/SGimmick.png', size: [48, 48], anchor: [24, 24] },
+    '元素石碑': { url: 'image/sekihi.png', size: [48, 48], anchor: [24, 24] },
+    '短火装置': { url: 'image/dai.png', size: [48, 48], anchor: [24, 24] },
+    '死域': { url: 'image/shiki.png', size: [48, 48], anchor: [24, 24] },
+    'リーフコア': { url: 'image/leaf.png', size: [48, 48], anchor: [24, 24] },
+
+    '普通の宝箱': { url: 'image/hutu.png', size: [48, 48], anchor: [24, 24] },
+    '精巧な宝箱': { url: 'image/seikou.png', size: [48, 48], anchor: [24, 24] },
+    '貴重な宝箱': { url: 'image/kityou.png', size: [48, 48], anchor: [24, 24] },
+    '豪華な宝箱': { url: 'image/gouka.png', size: [48, 48], anchor: [24, 24] },
+    '珍奇な宝箱': { url: 'image/tinki.png', size: [48, 48], anchor: [24, 24] }
+};
+
+// 動的アイコン生成
+function getIcon(type, zoom, flags = {}) {
+    const base = baseIcons[type];
+    const scale = 1 + (zoom / 10); // スケール計算は維持
+    const size = [
+        Math.max(16, Math.min(96, base.size[0] * scale)),
+        Math.max(16, Math.min(96, base.size[1] * scale))
+    ];
+    // アンカーポイントをアイコンの中央下に設定
+    const anchor = [
+        size[0] / 2, // 横中央
+        size[1] // 縦は画像の下端（ピンの先端）
+    ];
+    const popupAnchor = [0, -size[1]]; // ポップアップをピンの上部に
+
+    const classes = [
+        'marker-container',
+        flags.isUnderground ? 'underground-marker' : '',
+        flags.isSeirei ? 'seirei-marker' : '',
+        flags.isChallenge ? 'challenge-marker' : ''
+    ].filter(Boolean).join(' ');
+
+    return L.divIcon({
+        className: classes,
+        html: `
+            <div>
+                <img src="${base.url}" style="width: ${size[0]}px; height: ${size[1]}px;">
+            </div>
+        `,
+        iconSize: size,
+        iconAnchor: anchor,
+        popupAnchor: popupAnchor
+    });
+}
+
+// 宝箱の印ポイント
+const chestPoints = {
+    '普通の宝箱': 1,
+    '精巧な宝箱': 2,
+    '貴重な宝箱': 3,
+    '豪華な宝箱': 4,
+    '珍奇な宝箱': 5
+};
+
+// 有効なピンの種類
+const validTypes = Object.keys(baseIcons);
+
+// ピンデータのエクスポート
+window.exportPoints = function() {
+    const data = JSON.stringify(points, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'genshin_points.json';
+    a.click();
+    URL.revokeObjectURL(url);
+};
+
+// ピンデータのインポート
+window.importPoints = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const importedPoints = JSON.parse(e.target.result);
+            if (!Array.isArray(importedPoints)) throw new Error('Invalid JSON format');
+
+            const validPoints = importedPoints.filter(point => {
+                return (
+                    point.id &&
+                    point.mapId &&
+                    validTypes.includes(point.type) &&
+                    Array.isArray(point.coords) && point.coords.length === 2 &&
+                    (point.description === undefined || typeof point.description === 'string') &&
+                    (point.youtubeUrl === undefined || typeof point.youtubeUrl === 'string') &&
+                    (point.isUnderground === undefined || typeof point.isUnderground === 'boolean') &&
+                    (point.isSeirei === undefined || typeof point.isSeirei === 'boolean') &&
+                    (point.isChallenge === undefined || typeof point.isChallenge === 'boolean')
+                );
+            });
+
+            if (validPoints.length === 0) {
+                alert('有効なピンデータがありません');
+                return;
+            }
+
+            points = validPoints;
+            localStorage.setItem('genshinPoints', JSON.stringify(points));
+            renderPoints();
+            updateCounts();
+            alert(`ピンデータをインポートしました（${validPoints.length}件）`);
+        } catch (err) {
+            alert('インポートに失敗しました: ' + err.message);
+        }
+    };
+    reader.readAsText(file);
+};
+
+// ピンの数と印の累計を更新
+function updateCounts() {
+    const selectedTypes = Array.from(document.querySelectorAll('#drawer input[type="checkbox"]:checked')).map(cb => cb.value);
+    const countsDiv = document.getElementById('counts');
+    let html = '';
+
+    Object.keys(maps).forEach(region => {
+        Object.keys(maps[region].areas).forEach(area => {
+            const areaName = maps[region].areas[area].name;
+            const areaPoints = points.filter(p => p.mapId.startsWith(`${region}_${area}_`) && selectedTypes.includes(p.type));
+            const typeCounts = {};
+
+            selectedTypes.forEach(type => {
+                const pointsOfType = areaPoints.filter(p => p.type === type);
+                const categories = [];
+                pointsOfType.forEach(p => {
+                    const flags = [];
+                    if (p.isUnderground) flags.push('地下');
+                    if (p.isSeirei) flags.push('仙');
+                    if (p.isChallenge) flags.push('チャレンジ');
+                    const key = flags.length ? flags.join(', ') : '地上';
+                    typeCounts[`${type}_${key}`] = (typeCounts[`${type}_${key}`] || 0) + 1;
+                });
+            });
+
+            const chestTotal = points
+                .filter(p => p.mapId.startsWith(`${region}_${area}_`) && Object.keys(chestPoints).includes(p.type))
+                .reduce((sum, p) => sum + (chestPoints[p.type] || 0), 0);
+
+            html += `<p><b>${areaName}</b>:</p>`;
+            Object.keys(typeCounts).forEach(key => {
+                const [type, category] = key.split('_');
+                html += `<p>${type} (${category}): ${typeCounts[key]}</p>`;
+            });
+            if (chestTotal > 0) {
+                html += `<p>印: ${chestTotal}</p>`;
+            }
+        });
+    });
+
+    countsDiv.innerHTML = html || '<p>ピンなし</p>';
+    renderPoints();
+}
+
+// マップを切り替え
+function switchMap(region, area, layerId = 'main') {
+    if (layerControl) layerControl.remove();
+    Object.values(currentLayers).forEach(layer => map.removeLayer(layer));
+    currentLayers = {};
+
+    currentMapId = `${region}_${area}_${layerId}`;
+    console.log(`Switching to map: ${currentMapId}`);
+
+    const areaData = maps[region].areas[area];
+    const imageBounds = areaData.layers[layerId].bounds;
+    const layerGroup = {};
+    Object.keys(areaData.layers).forEach(layerKey => {
+        const layerData = areaData.layers[layerKey];
+        console.log(`Loading layer: ${layerData.name}, image: ${layerData.image}`);
+        const layer = L.imageOverlay(layerData.image, layerData.bounds);
+        layer.on('error', () => {
+            console.error(`Failed to load image: ${layerData.image}`);
+            alert(`マップ画像の読み込みに失敗しました: ${layerData.name}`);
+        });
+        currentLayers[layerKey] = layer;
+        layerGroup[layerData.name] = layer;
+    });
+
+    try {
+        currentLayers[layerId].addTo(map);
+        map.fitBounds(imageBounds);
+        map.setView([imageBounds[1][0] / 2, imageBounds[1][1] / 2], 0);
+        layerControl = L.control.layers(layerGroup, null, { collapsed: false }).addTo(map);
+        renderPoints();
+        updateCounts();
+    } catch (err) {
+        console.error('Error in switchMap:', err);
+        alert('マップの切り替えに失敗しました');
     }
 }
+
+// ピンをマップに描画
+function renderPoints() {
+    map.eachLayer(layer => {
+        if (layer instanceof L.Marker) map.removeLayer(layer);
+    });
+
+    const zoom = map.getZoom();
+    const selectedTypes = Array.from(document.querySelectorAll('#drawer input[type="checkbox"]:checked')).map(cb => cb.value);
+
+    points.forEach(point => {
+        if (point.mapId === currentMapId && selectedTypes.includes(point.type)) {
+            try {
+                if (!Array.isArray(point.coords) || point.coords.length !== 2 || isNaN(point.coords[0]) || isNaN(point.coords[1])) {
+                    console.error(`Invalid coordinates for point ${point.id}:`, point.coords);
+                    return;
+                }
+
+                const flags = {
+                    isUnderground: point.isUnderground,
+                    isSeirei: point.isSeirei,
+                    isChallenge: point.isChallenge
+                };
+                const icon = getIcon(point.type, zoom, flags);
+
+                const marker = L.marker(point.coords, {
+                    icon,
+                    type: point.type,
+                    mapId: point.mapId
+                }).addTo(map);
+
+                // デバッグログ
+                console.log(`Marker ${point.id}: coords=${point.coords}, iconSize=${icon.options.iconSize}, iconAnchor=${icon.options.iconAnchor}, type=${point.type}, flags=${JSON.stringify(flags)}`);
+
+                const flagTextArray = [];
+                if (point.isUnderground) flagTextArray.push('地下');
+                if (point.isSeirei) flagTextArray.push('仙');
+                if (point.isChallenge) flagTextArray.push('チャレンジ');
+                const flagText = flagTextArray.length ? ` (${flagTextArray.join(', ')})` : '';
+                const popupContent = `
+                    <b>${point.type}${flagText}</b><br>
+                    ${point.description || '（説明なし）'}
+                    <br><button class="edit" onclick="editPoint(${point.id})">編集</button>
+                    <button onclick="deletePoint(${point.id})">削除</button>
+                `;
+                marker.bindPopup(popupContent);
+
+                if (point.youtubeUrl) {
+                    marker.on('click touchend', () => openVideoModal(point.youtubeUrl));
+                }
+            } catch (err) {
+                console.error(`Error rendering point ${point.id}:`, err);
+            }
+        }
+    });
+    console.log(`Rendered points for mapId: ${currentMapId}, count: ${points.filter(p => p.mapId === currentMapId).length}`);
+}
+
+// ズーム時にピンのサイズを更新
+map.on('zoomend', () => {
+    renderPoints();
+});
+
+// ドロワーの開閉
+const toggleDrawer = document.getElementById('toggleDrawer');
+const drawer = document.getElementById('drawer');
+const closeDrawer = document.getElementById('closeDrawer');
+
+toggleDrawer.addEventListener('click', () => {
+    drawer.classList.toggle('open');
+});
+
+closeDrawer.addEventListener('click', () => {
+    drawer.classList.remove('open');
+});
+
+window.addEventListener('click', (event) => {
+    if (drawer.classList.contains('open') && !drawer.contains(event.target) && !toggleDrawer.contains(event.target)) {
+        drawer.classList.remove('open');
+    }
+});
+
+// ドロップダウンの初期化
+const regionSelect = document.getElementById('regionSelect');
+const areaSelect = document.getElementById('areaSelect');
+const layerSelect = document.getElementById('layerSelect');
+const layerLabel = document.getElementById('layerLabel');
+
+function updateAreaSelect(region) {
+    areaSelect.innerHTML = '';
+    const areas = maps[region].areas;
+    Object.keys(areas).forEach(areaKey => {
+        const option = document.createElement('option');
+        option.value = areaKey;
+        option.textContent = areas[areaKey].name;
+        areaSelect.appendChild(option);
+    });
+}
+
+function updateLayerSelect(region, area) {
+    if (region === 'inazuma' && area === 'tsumei') {
+        layerSelect.innerHTML = '';
+        const layers = maps[region].areas[area].layers;
+        Object.keys(layers).forEach(layerKey => {
+            const option = document.createElement('option');
+            option.value = layerKey;
+            option.textContent = layers[layerKey].name;
+            layerSelect.appendChild(option);
+        });
+        layerLabel.style.display = 'inline';
+        layerSelect.style.display = 'inline';
+    } else {
+        layerLabel.style.display = 'none';
+        layerSelect.style.display = 'none';
+    }
+}
+
+regionSelect.addEventListener('change', () => {
+    const region = regionSelect.value;
+    updateAreaSelect(region);
+    const area = areaSelect.value;
+    updateLayerSelect(region, area);
+    switchMap(region, area);
+});
+
+areaSelect.addEventListener('change', () => {
+    const region = regionSelect.value;
+    const area = areaSelect.value;
+    updateLayerSelect(region, area);
+    const layerId = (region === 'inazuma' && area === 'tsumei') ? layerSelect.value : 'main';
+    switchMap(region, area, layerId);
+});
+
+layerSelect.addEventListener('change', () => {
+    const region = regionSelect.value;
+    const area = areaSelect.value;
+    const layerId = layerSelect.value;
+    switchMap(region, area, layerId);
+});
+
+try {
+    updateAreaSelect('mondstadt');
+    updateLayerSelect('mondstadt', 'mondstadt');
+    switchMap('mondstadt', 'mondstadt');
+} catch (err) {
+    console.error('Error initializing map:', err);
+    alert('マップの初期化に失敗しました');
+}
+
+// ピンの削除
+window.deletePoint = function(id) {
+    points = points.filter(point => point.id !== id);
+    localStorage.setItem('genshinPoints', JSON.stringify(points));
+    renderPoints();
+    updateCounts();
+};
+
+// ピンの編集
+window.editPoint = function(id) {
+    const point = points.find(p => p.id === id);
+    if (!point) return;
+
+    const pinModal = document.getElementById('pinModal');
+    setTimeout(() => {
+        pinModal.style.display = 'flex';
+    }, 100);
+    document.getElementById('modalTitle').textContent = 'ピンを編集';
+    document.querySelector(`input[name="type"][value="${point.type}"]`).checked = true;
+    document.getElementById('isUnderground').checked = point.isUnderground || false;
+    document.getElementById('isSeirei').checked = point.isSeirei || false;
+    document.getElementById('isChallenge').checked = point.isChallenge || false;
+    document.getElementById('description').value = point.description || '';
+    document.getElementById('youtubeUrl').value = point.youtubeUrl ? point.youtubeUrl.replace('embed/', 'watch?v=') : '';
+    tempCoords = point.coords;
+
+    pinForm.onsubmit = function(e) {
+        e.preventDefault();
+        const youtubeUrl = document.getElementById('youtubeUrl').value;
+        if (youtubeUrl && !youtubeUrl.match(/youtube\.com|youtu\.be/)) {
+            alert('有効なYouTube URLを入力してください');
+            return;
+        }
+        points = points.filter(p => p.id !== id);
+        const updatedPoint = {
+            id,
+            mapId: currentMapId,
+            type: document.querySelector('input[name="type"]:checked').value,
+            coords: tempCoords,
+            isUnderground: document.getElementById('isUnderground').checked,
+            isSeirei: document.getElementById('isSeirei').checked,
+            isChallenge: document.getElementById('isChallenge').checked,
+            description: document.getElementById('description').value || '',
+            youtubeUrl: youtubeUrl ? youtubeUrl.replace('watch?v=', 'embed/') : ''
+        };
+        points.push(updatedPoint);
+        localStorage.setItem('genshinPoints', JSON.stringify(points));
+        renderPoints();
+        updateCounts();
+        closePinModal();
+        pinForm.onsubmit = addPointHandler;
+    };
+};
+
+// ピンの追加
+const addPointHandler = function(e) {
+    e.preventDefault();
+    const youtubeUrl = document.getElementById('youtubeUrl').value;
+    if (youtubeUrl && !youtubeUrl.match(/youtube\.com|youtu\.be/)) {
+        alert('有効なYouTube URLを入力してください');
+        return;
+    }
+    const point = {
+        id: Date.now(),
+        mapId: currentMapId,
+        type: document.querySelector('input[name="type"]:checked').value,
+        coords: tempCoords,
+        isUnderground: document.getElementById('isUnderground').checked,
+        isSeirei: document.getElementById('isSeirei').checked,
+        isChallenge: document.getElementById('isChallenge').checked,
+        description: document.getElementById('description').value || '',
+        youtubeUrl: youtubeUrl ? youtubeUrl.replace('watch?v=', 'embed/') : ''
+    };
+    points.push(point);
+    localStorage.setItem('genshinPoints', JSON.stringify(points));
+    renderPoints();
+    updateCounts();
+    closePinModal();
+};
+
+// フォームの初期ハンドラ
+const pinForm = document.getElementById('pinForm');
+pinForm.onsubmit = addPointHandler;
+
+// マップクリック/タッチでピン追加モーダル
+let tempCoords = null;
+map.on('click touchend', e => {
+    tempCoords = [e.latlng.lat, e.latlng.lng];
+    const pinModal = document.getElementById('pinModal');
+    console.log('Opening pin modal at coords:', tempCoords);
+    setTimeout(() => {
+        pinModal.style.display = 'flex';
+    }, 100);
+    document.getElementById('modalTitle').textContent = 'ピンを追加';
+    pinForm.reset();
+    document.querySelector('input[name="type"][value="風神瞳"]').checked = true;
+    document.getElementById('isUnderground').checked = false;
+    document.getElementById('isSeirei').checked = false;
+    document.getElementById('isChallenge').checked = false;
+    pinForm.onsubmit = addPointHandler;
+});
+
+// キャンセルボタン
+const cancelButton = document.getElementById('cancelButton');
+cancelButton.addEventListener('click', closePinModal);
+cancelButton.addEventListener('touchend', closePinModal);
+
+// 動画モーダル
+const videoModal = document.getElementById('videoModal');
+const videoFrame = document.getElementById('videoFrame');
+const videoClose = document.getElementsByClassName('video-close')[0];
+
+function openVideoModal(url) {
+    videoFrame.src = url;
+    setTimeout(() => {
+        videoModal.style.display = 'flex';
+    }, 100);
+}
+
+videoClose.onclick = function() {
+    videoModal.style.display = 'none';
+    videoFrame.src = '';
+};
+videoClose.addEventListener('touchend', () => {
+    videoModal.style.display = 'none';
+    videoFrame.src = '';
+});
+
+// ピンモーダル
+const pinModal = document.getElementById('pinModal');
+const pinClose = document.getElementsByClassName('pin-close')[0];
+
+function closePinModal() {
+    pinModal.style.display = 'none';
+    pinForm.reset();
+    tempCoords = null;
+    pinForm.onsubmit = addPointHandler;
+}
+
+pinClose.onclick = closePinModal;
+pinClose.addEventListener('touchend', closePinModal);
+
+window.onclick = function(event) {
+    if (event.target == videoModal) {
+        videoModal.style.display = 'none';
+        videoFrame.src = '';
+    }
+    if (event.target == pinModal) {
+        closePinModal();
+    }
+};
+window.addEventListener('touchend', (event) => {
+    if (event.target == videoModal) {
+        videoModal.style.display = 'none';
+        videoFrame.src = '';
+    }
+    if (event.target == pinModal) {
+        closePinModal();
+    }
+});
