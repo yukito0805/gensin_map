@@ -2,74 +2,32 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>原神 探索マップ（テスト）</title>
+    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- 独自CSS -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="controls">
         <button id="toggleDrawer">☰</button>
         <label for="regionSelect">地域:</label>
-        <select id="regionSelect">
-            <option value="mondstadt">モンド</option>
-            <option value="liyue">璃月</option>
-            <option value="inazuma">稲妻</option>
-            <option value="sumeru">スメール</option>
-            <option value="fontaine">フォンテーヌ</option>
-            <option value="natlan">ナタ</option>
-        </select>
+        <select id="regionSelect"></select>
         <label for="areaSelect">エリア:</label>
         <select id="areaSelect"></select>
         <label for="layerSelect" id="layerLabel" style="display: none;">レイヤー:</label>
         <select id="layerSelect" style="display: none;"></select>
     </div>
-    <div id="drawer">
-        <button id="closeDrawer">×</button>
-        <h3>ピンの種類</h3>
-        <label><input type="checkbox" value="風神瞳" checked onchange="updateCounts()"> 風神瞳</label>
-        <label><input type="checkbox" value="岩神瞳" checked onchange="updateCounts()"> 岩神瞳</label>
-        <label><input type="checkbox" value="電神瞳" checked onchange="updateCounts()"> 電神瞳</label>
-        <label><input type="checkbox" value="草神瞳" checked onchange="updateCounts()"> 草神瞳</label>
-        <label><input type="checkbox" value="水神瞳" checked onchange="updateCounts()"> 水神瞳</label>
-        <label><input type="checkbox" value="炎神瞳" checked onchange="updateCounts()"> 炎神瞳</label>
-        <label><input type="checkbox" value="チャレンジ" checked onchange="updateCounts()"> チャレンジ</label>
-        <label><input type="checkbox" value="仙霊" checked onchange="updateCounts()"> 仙霊</label>
-
-
-        <label><input type="checkbox" value="元素石碑" checked onchange="updateCounts()"> 元素石碑</label>
-        <label><input type="checkbox" value="立方体" checked onchange="updateCounts()"> 立方体</label>
-        <label><input type="checkbox" value="鍵紋1" checked onchange="updateCounts()"> 鍵紋1</label>
-        <label><input type="checkbox" value="鍵紋2" checked onchange="updateCounts()"> 鍵紋2</label>
-        <label><input type="checkbox" value="鍵紋3" checked onchange="updateCounts()"> 鍵紋3</label>
-        <label><input type="checkbox" value="鍵紋4" checked onchange="updateCounts()"> 鍵紋4</label>
-        <label><input type="checkbox" value="鍵紋5" checked onchange="updateCounts()"> 鍵紋5</label>
-        <label><input type="checkbox" value="雷霊" checked onchange="updateCounts()"> 雷霊</label>
-
-        <label><input type="checkbox" value="アランナラ" checked onchange="updateCounts()"> アランナラ</label>
-        <label><input type="checkbox" value="スメールギミック" checked onchange="updateCounts()"> スメールギミック</label>
-        <label><input type="checkbox" value="リーフコア" checked onchange="updateCounts()"> リーフコア</label>
-        <label><input type="checkbox" value="短火装置" checked onchange="updateCounts()"> 短火装置</label>
-        <label><input type="checkbox" value="死域" checked onchange="updateCounts()"> 死域</label>
-
-        <label><input type="checkbox" value="普通の宝箱" checked onchange="updateCounts()"> 普通の宝箱</label>
-        <label><input type="checkbox" value="精巧な宝箱" checked onchange="updateCounts()"> 精巧な宝箱</label>
-        <label><input type="checkbox" value="貴重な宝箱" checked onchange="updateCounts()"> 貴重な宝箱</label>
-        <label><input type="checkbox" value="豪華な宝箱" checked onchange="updateCounts()"> 豪華な宝箱</label>
-        <label><input type="checkbox" value="珍奇な宝箱" checked onchange="updateCounts()"> 珍奇な宝箱</label>
-        <h3>ピンの数</h3>
-        <div id="counts"></div>
-        <h3>データ管理</h3>
-        <button onclick="exportPoints()">エクスポート</button>
-        <input type="file" id="importFile" accept=".json" onchange="importPoints(event)">
-    </div>
     <div id="map"></div>
+    <!-- 動画ポップアップ用のモーダル -->
     <div id="videoModal" class="modal">
         <div class="modal-content">
             <span class="close video-close">×</span>
             <iframe id="videoFrame" width="560" height="315" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         </div>
     </div>
+    <!-- ピン追加/編集用のモーダル -->
     <div id="pinModal" class="modal">
         <div class="modal-content">
             <span class="close pin-close">×</span>
@@ -79,146 +37,64 @@
                 <div class="icon-selector">
                     <label class="icon-option">
                         <input type="radio" name="type" value="風神瞳" checked>
-                        <img src="image/hujin.jpg" alt="風神瞳" width="80">
+                        <img src="image/hujin.jpg" alt="風神瞳" width="60" loading="lazy">
                         <span>風神瞳</span>
                     </label>
                     <label class="icon-option">
                         <input type="radio" name="type" value="岩神瞳">
-                        <img src="image/iwagami.jpg" alt="岩神瞳" width="80">
+                        <img src="image/iwagami.jpg" alt="岩神瞳" width="60" loading="lazy">
                         <span>岩神瞳</span>
                     </label>
                     <label class="icon-option">
                         <input type="radio" name="type" value="電神瞳">
-                        <img src="image/inazumahitomi.png" alt="電神瞳" width="80">
+                        <img src="image/inazumahitomi.png" alt="電神瞳" width="60" loading="lazy">
                         <span>電神瞳</span>
                     </label>
                     <label class="icon-option">
                         <input type="radio" name="type" value="草神瞳">
-                        <img src="image/sousin.png" alt="草神瞳" width="80">
+                        <img src="image/sousin.png" alt="草神瞳" width="60" loading="lazy">
                         <span>草神瞳</span>
                     </label>
                     <label class="icon-option">
                         <input type="radio" name="type" value="水神瞳">
-                        <img src="image/suijin.png" alt="水神瞳" width="80">
+                        <img src="image/suijin.png" alt="水神瞳" width="60" loading="lazy">
                         <span>水神瞳</span>
                     </label>
                     <label class="icon-option">
                         <input type="radio" name="type" value="炎神瞳">
-                        <img src="image/enjin.png" alt="炎神瞳" width="80">
+                        <img src="image/enjin.png" alt="炎神瞳" width="60" loading="lazy">
                         <span>炎神瞳</span>
                     </label>
                     <label class="icon-option">
                         <input type="radio" name="type" value="チャレンジ">
-                        <img src="image/challenge.png" alt="チャレンジ" width="80">
+                        <img src="image/challenge.png" alt="チャレンジ" width="60" loading="lazy">
                         <span>チャレンジ</span>
                     </label>
                     <label class="icon-option">
                         <input type="radio" name="type" value="仙霊">
-                        <img src="image/senrei.png" alt="仙霊" width="80">
+                        <img src="image/senrei.png" alt="仙霊" width="60" loading="lazy">
                         <span>仙霊</span>
                     </label>
                     <label class="icon-option">
                         <input type="radio" name="type" value="立方体">
-                        <img src="image/square.png" alt="立方体" width="80">
+                        <img src="image/square.png" alt="立方体" width="60" loading="lazy">
                         <span>立方体</span>
                     </label>
                     <label class="icon-option">
                         <input type="radio" name="type" value="鍵紋1">
-                        <img src="image/key1.png" alt="鍵紋1" width="80">
+                        <img src="image/key1.png" alt="鍵紋1" width="60" loading="lazy">
                         <span>鍵紋1</span>
                     </label>
                     <label class="icon-option">
                         <input type="radio" name="type" value="鍵紋2">
-                        <img src="image/key2.png" alt="鍵紋2" width="80">
+                        <img src="image/key2.png" alt="鍵紋2" width="60" loading="lazy">
                         <span>鍵紋2</span>
                     </label>
                     <label class="icon-option">
                         <input type="radio" name="type" value="鍵紋3">
-                        <img src="image/key3.png" alt="鍵紋3" width="80">
+                        <img src="image/key3.png" alt="鍵紋3" width="60" loading="lazy">
                         <span>鍵紋3</span>
                     </label>
-                    <label class="icon-option">
-                        <input type="radio" name="type" value="鍵紋4">
-                        <img src="image/key4.png" alt="鍵紋4" width="80">
-                        <span>鍵紋4</span>
-                    </label>
-                    <label class="icon-option">
-                        <input type="radio" name="type" value="鍵紋5">
-                        <img src="image/key5.png" alt="鍵紋5" width="80">
-                        <span>鍵紋5</span>
-                    </label>
-                    <label class="icon-option">
-                        <input type="radio" name="type" value="雷霊">
-                        <img src="image/rairei.png" alt="雷霊" width="80">
-                        <span>雷霊</span>
-                    </label>
-
-                    <label class="icon-option">
-                        <input type="radio" name="type" value="アランナラ">
-                        <img src="image/arannara.png" alt="アランナラ" width="80">
-                        <span>アランナラ</span>
-                    </label>
-
-                    <label class="icon-option">
-                        <input type="radio" name="type" value="スメールギミック">
-                        <img src="image/SGimmick.png" alt="スメールギミック" width="80">
-                        <span>スメールギミック</span>
-                    </label>
-
-                    <label class="icon-option">
-                        <input type="radio" name="type" value="元素石碑">
-                        <img src="image/sekihi.png" alt="元素石碑" width="80">
-                        <span>元素石碑</span>
-                    </label>
-
-                    <label class="icon-option">
-                        <input type="radio" name="type" value="短火石碑">
-                        <img src="image/dai.png" alt="短火石碑" width="80">
-                        <span>短火石碑</span>
-                    </label>
-
-                    <label class="icon-option">
-                        <input type="radio" name="type" value="死域">
-                        <img src="image/shiki.png" alt="死域" width="80">
-                        <span>死域</span>
-                    </label>
-
-                    <label class="icon-option">
-                        <input type="radio" name="type" value="リーフコア">
-                        <img src="image/leaf.png" alt="リーフコア" width="80">
-                        <span>リーフコア</span>
-                    </label>
-
-                    <label class="icon-option">
-                        <input type="radio" name="type" value="普通の宝箱">
-                        <img src="image/hutu.png" alt="普通の宝箱" width="80">
-                        <span>普通の宝箱</span>
-                    </label>
-                    <label class="icon-option">
-                        <input type="radio" name="type" value="精巧な宝箱">
-                        <img src="image/seikou.png" alt="精巧な宝箱" width="80">
-                        <span>精巧な宝箱</span>
-                    </label>
-                    <label class="icon-option">
-                        <input type="radio" name="type" value="貴重な宝箱">
-                        <img src="image/kityou.png" alt="貴重な宝箱" width="80">
-                        <span>貴重な宝箱</span>
-                    </label>
-                    <label class="icon-option">
-                        <input type="radio" name="type" value="豪華な宝箱">
-                        <img src="image/gouka.png" alt="豪華な宝箱" width="80">
-                        <span>豪華な宝箱</span>
-                    </label>
-                    <label class="icon-option">
-                        <input type="radio" name="type" value="珍奇な宝箱">
-                        <img src="image/tinki.png" alt="珍奇な宝箱" width="80">
-                        <span>珍奇な宝箱</span>
-                    </label>
-                </div>
-                <div class="checkbox-group">
-                    <label><input type="checkbox" id="isUnderground" name="isUnderground"> 地下アイテム</label>
-                    <label><input type="checkbox" id="isSeirei" name="isSeirei"> 仙（仙霊）</label>
-                    <label><input type="checkbox" id="isChallenge" name="isChallenge"> チャレンジ</label>
                 </div>
                 <label for="description">説明:</label>
                 <textarea id="description" name="description"></textarea><br>
@@ -231,7 +107,10 @@
             </form>
         </div>
     </div>
+
+    <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- 独自JS -->
     <script src="script.js"></script>
 </body>
 </html>
