@@ -149,7 +149,7 @@ let currentLayers = {};
 
 console.log('script.js: Points loaded:', points);
 
-// ピンのアイコン定義
+// ピンのアイコン定義（ファイル名を小文字で統一）
 const baseIcons = {
     '風神瞳': { url: './image/hujin.jpg', size: [48, 48], anchor: [24, 24] },
     '岩神瞳': { url: './image/iwagami.jpg', size: [48, 48], anchor: [24, 24] },
@@ -167,7 +167,7 @@ const baseIcons = {
     '鍵紋5': { url: './image/key5.png', size: [48, 48], anchor: [24, 24] },
     '雷霊': { url: './image/rairei.png', size: [48, 48], anchor: [24, 24] },
     'アランナラ': { url: './image/arannara.png', size: [48, 48], anchor: [24, 24] },
-    'スメールギミック': { url: './image/SGimmick.png', size: [48, 48], anchor: [24, 24] },
+    'スメールギミック': { url: './image/sgimmick.png', size: [48, 48], anchor: [24, 24] },
     '元素石碑': { url: './image/sekihi.png', size: [48, 48], anchor: [24, 24] },
     '短火装置': { url: './image/dai.png', size: [48, 48], anchor: [24, 24] },
     '死域': { url: './image/shiki.png', size: [48, 48], anchor: [24, 24] },
@@ -192,17 +192,17 @@ function normalizeCoords(coords, bounds) {
 // 動的アイコン生成
 function getIcon(type, zoom, flags = {}) {
     const base = baseIcons[type];
-    const scale = 1 + (zoom / 10); // スケール計算は維持
+    if (!base) {
+        console.error(`Icon not found for type: ${type}`);
+        return L.divIcon({ className: 'marker-container', html: '<div>⚠️</div>', iconSize: [48, 48] });
+    }
+    const scale = 1 + (zoom / 10);
     const size = [
         Math.max(16, Math.min(96, base.size[0] * scale)),
         Math.max(16, Math.min(96, base.size[1] * scale))
     ];
-    // アンカーポイントをアイコンの中央下に設定
-    const anchor = [
-        size[0] / 2, // 横中央
-        size[1] // 縦は画像の下端（ピンの先端）
-    ];
-    const popupAnchor = [0, -size[1]]; // ポップアップをピンの上部に
+    const anchor = [size[0] / 2, size[1]];
+    const popupAnchor = [0, -size[1]];
 
     const classes = [
         'marker-container',
@@ -215,7 +215,7 @@ function getIcon(type, zoom, flags = {}) {
         className: classes,
         html: `
             <div>
-                <img src="${base.url}" style="width: ${size[0]}px; height: ${size[1]}px;">
+                <img src="${base.url}" style="width: ${size[0]}px; height: ${size[1]}px;" onerror="console.error('Failed to load icon: ${base.url}'); this.style.display='none';">
             </div>
         `,
         iconSize: size,
