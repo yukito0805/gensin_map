@@ -198,18 +198,6 @@ body {
     resize: vertical;
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow: hidden;
-}
-
-#map {
-  width: 100%;
-  height: 100%;
-}
-
 .checkbox-group {
     display: flex;
     flex-direction: row;
@@ -346,11 +334,15 @@ html, body {
     position: relative;
 }
 
+.marker-container {
+    position: relative;
+}
+
 .underground-marker::after {
     content: 'U';
     position: absolute;
     bottom: 0;
-    right: 0;
+    right: 0; /* 統一 */
     background: #FF0000;
     color: white;
     font-size: 12px;
@@ -361,14 +353,15 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: center;
-    transform: scale(var(--scale, 1));
+    transform: none; /* スケール削除 */
+    z-index: 10;
 }
 
 .seirei-marker::after {
     content: 'S';
     position: absolute;
-    bottom: 0;
-    right: 20px;
+    bottom: 20px; /* 垂直にずらす */
+    right: 0; /* 統一 */
     background: #00B7EB;
     color: white;
     font-size: 12px;
@@ -379,14 +372,15 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: center;
-    transform: scale(var(--scale, 1));
+    transform: none; /* スケール削除 */
+    z-index: 10;
 }
 
 .challenge-marker::after {
     content: 'C';
     position: absolute;
-    bottom: 0;
-    right: 40px;
+    bottom: 40px; /* 垂直にずらす */
+    right: 0; /* 統一 */
     background: #FF4040;
     color: white;
     font-size: 12px;
@@ -397,7 +391,15 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: center;
-    transform: scale(var(--scale, 1));
+    transform: none; /* スケール削除 */
+    z-index: 10;
+}
+
+.marker-container img {
+    display: block; /* インラインマージン防止 */
+    position: relative;
+    top: 0;
+    left: 0;
 }
 
 /* モバイル/タブレット対応 */
