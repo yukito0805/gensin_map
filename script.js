@@ -46,7 +46,7 @@ const maps = {
                 layers: {
                     main: {
                         name: '層岩巨淵マップ',
-                        image: './image/natlan_P0.png',
+                        image: './image/natlan_p0.png',
                         bounds: [[0, 0], [1677, 1893]]
                     }
                 }
@@ -60,7 +60,7 @@ const maps = {
                 layers: {
                     main: {
                         name: '稲妻マップ',
-                        image: './image/inazuma1_P0.png',
+                        image: './image/inazuma1_p0.png',
                         bounds: [[0, 0], [5568, 6018]]
                     }
                 }
@@ -70,7 +70,7 @@ const maps = {
                 layers: {
                     main: {
                         name: '淵下宮マップ',
-                        image: './image/inazuma_P0.png',
+                        image: './image/inazuma_p0.png',
                         bounds: [[0, 0], [3018, 3171]]
                     }
                 }
@@ -84,7 +84,7 @@ const maps = {
                 layers: {
                     main: {
                         name: 'スメールマップ',
-                        image: './image/sumeru_P0_highres.png',
+                        image: './image/sumeru_p0_highres.png',
                         bounds: [[0, 0], [5578, 5543]]
                     }
                 }
@@ -108,7 +108,7 @@ const maps = {
                 layers: {
                     main: {
                         name: '往日の海マップ',
-                        image: './image/map34_P0.png',
+                        image: './image/map34_p0.png',
                         bounds: [[0, 0], [1014, 1998]]
                     }
                 }
@@ -122,7 +122,7 @@ const maps = {
                 layers: {
                     main: {
                         name: 'ナタマップ',
-                        image: './image/natlan_N1.png',
+                        image: './image/natlan_n1.png',
                         bounds: [[0, 0], [5896, 5432]]
                     }
                 }
@@ -132,7 +132,7 @@ const maps = {
                 layers: {
                     main: {
                         name: '古の聖山マップ',
-                        image: './image/map36_P0.png',
+                        image: './image/map36_p0.png',
                         bounds: [[0, 0], [3117, 2634]]
                     }
                 }
@@ -149,7 +149,7 @@ let currentLayers = {};
 
 console.log('script.js: Points loaded:', points);
 
-// ピンのアイコン定義（ファイル名を小文字で統一）
+// ピンのアイコン定義
 const baseIcons = {
     '風神瞳': { url: './image/hujin.jpg', size: [48, 48], anchor: [24, 24] },
     '岩神瞳': { url: './image/iwagami.jpg', size: [48, 48], anchor: [24, 24] },
@@ -201,8 +201,12 @@ function getIcon(type, zoom, flags = {}) {
         Math.max(16, Math.min(96, base.size[0] * scale)),
         Math.max(16, Math.min(96, base.size[1] * scale))
     ];
-    const anchor = [size[0] / 2, size[1]];
-    const popupAnchor = [0, -size[1]];
+    // アンカーポイントをアイコンの中心に設定（ピンの先端を調整）
+    const anchor = [
+        size[0] / 2, // 横中央
+        size[1] * 0.8 // 縦はアイコンの下端に近づける（ピンの先端をクリック位置に近づける）
+    ];
+    const popupAnchor = [0, -size[1] * 0.8]; // ポップアップをピンの上部に
 
     const classes = [
         'marker-container',
@@ -210,6 +214,8 @@ function getIcon(type, zoom, flags = {}) {
         flags.isSeirei ? 'seirei-marker' : '',
         flags.isChallenge ? 'challenge-marker' : ''
     ].filter(Boolean).join(' ');
+
+    console.log(`Icon for ${type}: size=${size}, anchor=${anchor}, popupAnchor=${popupAnchor}`);
 
     return L.divIcon({
         className: classes,
@@ -409,6 +415,7 @@ function renderPoints() {
                 if (point.youtubeUrl) {
                     marker.on('click touchend', () => openVideoModal(point.youtubeUrl));
                 }
+                console.log(`Rendered point: id=${point.id}, type=${point.type}, coords=${point.coords}`);
             } catch (err) {
                 console.error(`Error rendering point ${point.id}:`, err);
             }
