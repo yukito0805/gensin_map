@@ -1,24 +1,8 @@
 // マップの初期化
-document.addEventListener('DOMContentLoaded', () => {
-    try {
-        const map = L.map('map', {
-            crs: L.CRS.Simple,
-            minZoom: -5,
-            maxZoom: 5,
-            renderer: L.canvas()
-        });
-
-        map.on('click', function(e) {
-            console.log('クリック位置:', e.latlng);
-        });
-
-        updateAreaSelect('mondstadt');
-        updateLayerSelect('mondstadt', 'mondstadt');
-        switchMap('mondstadt', 'mondstadt');
-    } catch (err) {
-        console.error('Error initializing map:', err);
-        alert('マップの初期化に失敗しました');
-    }
+const map = L.map('map', {
+    crs: L.CRS.Simple,
+    minZoom: -5,
+    maxZoom: 5
 });
 
 // マップ定義
@@ -30,7 +14,7 @@ const maps = {
                 layers: {
                     main: {
                         name: 'モンドマップ',
-                        image: '/image/mondstadt.png',
+                        image: 'image/mondstadt.png',
                         bounds: [[0, 0], [2765, 3878]]
                     }
                 }
@@ -44,7 +28,7 @@ const maps = {
                 layers: {
                     main: {
                         name: '璃月マップ',
-                        image: '/image/liyue.png',
+                        image: 'image/liyue.png',
                         bounds: [[0, 0], [4169, 4571]]
                     }
                 }
@@ -54,7 +38,7 @@ const maps = {
                 layers: {
                     main: {
                         name: '層岩巨淵マップ',
-                        image: '/image/natlan_P0.png',
+                        image: 'image/natlan_P0.png',
                         bounds: [[0, 0], [1677, 1893]]
                     }
                 }
@@ -68,7 +52,7 @@ const maps = {
                 layers: {
                     main: {
                         name: '稲妻マップ',
-                        image: '/image/inazuma1_P0.png',
+                        image: 'image/inazuma1_P0.png',
                         bounds: [[0, 0], [5568, 6018]]
                     }
                 }
@@ -78,7 +62,7 @@ const maps = {
                 layers: {
                     main: {
                         name: '淵下宮マップ',
-                        image: '/image/inazuma_P0.png',
+                        image: 'image/inazuma_P0.png',
                         bounds: [[0, 0], [3018, 3171]]
                     }
                 }
@@ -92,7 +76,7 @@ const maps = {
                 layers: {
                     main: {
                         name: 'スメールマップ',
-                        image: '/image/sumeru_P0_highres.png',
+                        image: 'image/sumeru_P0_highres.png',
                         bounds: [[0, 0], [5578, 5543]]
                     }
                 }
@@ -106,7 +90,7 @@ const maps = {
                 layers: {
                     main: {
                         name: 'フォンテーヌマップ',
-                        image: '/image/fontaine_map.png',
+                        image: 'image/fontaine_map.png',
                         bounds: [[0, 0], [4356, 3175]]
                     }
                 }
@@ -116,7 +100,7 @@ const maps = {
                 layers: {
                     main: {
                         name: '往日の海マップ',
-                        image: '/image/map34_P0.png',
+                        image: 'image/map34_P0.png',
                         bounds: [[0, 0], [1014, 1998]]
                     }
                 }
@@ -130,7 +114,7 @@ const maps = {
                 layers: {
                     main: {
                         name: 'ナタマップ',
-                        image: '/image/natlan_N1.png',
+                        image: 'image/natlan_N1.png',
                         bounds: [[0, 0], [5896, 5432]]
                     }
                 }
@@ -140,7 +124,7 @@ const maps = {
                 layers: {
                     main: {
                         name: '古の聖山マップ',
-                        image: '/image/map36_P0.png',
+                        image: 'image/map36_P0.png',
                         bounds: [[0, 0], [3117, 2634]]
                     }
                 }
@@ -150,500 +134,192 @@ const maps = {
 };
 
 // ピンのデータ管理
-let points = JSON.parse(localStorage.getItem('genshinPoints')) || [];
-let currentMapId = 'mondstadt_mondstadt_main';
-let layerControl = null;
-let currentLayers = {};
+let points = [];
+const MAX_POINTS = 100;
+const markers = new Map();
 
-// ピンのアイコン定義
-const baseIcons = {
-    '風神瞳': { url: '/image/hujin.jpg', size: [48, 48], anchor: [24, 24] },
-    '岩神瞳': { url: '/image/iwagami.jpg', size: [48, 48], anchor: [24, 24] },
-    '電神瞳': { url: '/image/inazumahitomi.png', size: [48, 48], anchor: [24, 24] },
-    '草神瞳': { url: '/image/sousin.png', size: [48, 48], anchor: [24, 24] },
-    '水神瞳': { url: '/image/suijin.png', size: [48, 48], anchor: [24, 24] },
-    '炎神瞳': { url: '/image/enjin.png', size: [48, 48], anchor: [24, 24] },
-    'チャレンジ': { url: '/image/challenge.png', size: [48, 48], anchor: [24, 24] },
-    '仙霊': { url: '/image/senrei.png', size: [48, 48], anchor: [24, 24] },
-    '立方体': { url: '/image/square.png', size: [48, 48], anchor: [24, 24] },
-    '鍵紋1': { url: '/image/key1.png', size: [48, 48], anchor: [24, 24] },
-    '鍵紋2': { url: '/image/key2.png', size: [48, 48], anchor: [24, 24] },
-    '鍵紋3': { url: '/image/key3.png', size: [48, 48], anchor: [24, 24] },
-    '鍵紋4': { url: '/image/key4.png', size: [48, 48], anchor: [24, 24] },
-    '鍵紋5': { url: '/image/key5.png', size: [48, 48], anchor: [24, 24] },
-    '雷霊': { url: '/image/rairei.png', size: [48, 48], anchor: [24, 24] },
-    'アランナラ': { url: '/image/arannara.png', size: [48, 48], anchor: [24, 24] },
-    'スメールギミック': { url: '/image/SGimmick.png', size: [48, 48], anchor: [24, 24] },
-    '元素石碑': { url: '/image/sekihi.png', size: [48, 48], anchor: [24, 24] },
-    '短火装置': { url: '/image/dai.png', size: [48, 48], anchor: [24, 24] },
-    '死域': { url: '/image/shiki.png', size: [48, 48], anchor: [24, 24] },
-    'リーフコア': { url: '/image/leaf.png', size: [48, 48], anchor: [24, 24] },
-    '普通の宝箱': { url: '/image/hutu.png', size: [48, 48], anchor: [24, 24] },
-    '精巧な宝箱': { url: '/image/seikou.png', size: [48, 48], anchor: [24, 24] },
-    '貴重な宝箱': { url: '/image/kityou.png', size: [48, 48], anchor: [24, 24] },
-    '豪華な宝箱': { url: '/image/gouka.png', size: [48, 48], anchor: [24, 24] },
-    '珍奇な宝箱': { url: '/image/tinki.png', size: [48, 48], anchor: [24, 24] }
-};
-
-// 動的アイコン生成
-function getIcon(type, zoom, flags = {}) {
-    if (!baseIcons[type]) {
-        console.error(`Icon type ${type} not found in baseIcons`);
-        return L.divIcon({ html: '<div>?</div>', iconSize: [16, 16] });
-    }
-    const base = baseIcons[type];
-    const scale = 1 + (zoom / 10);
-    const size = [
-        Math.max(16, Math.min(96, base.size[0] * scale)),
-        Math.max(16, Math.min(96, base.size[1] * scale))
-    ];
-    const anchor = [
-        size[0] / 2,
-        size[1] + (navigator.userAgent.includes('iPad') ? 2 : 0) // iPad補正
-    ];
-    const popupAnchor = [0, -size[1]];
-
-    const classes = [
-        'marker-container',
-        flags.isUnderground ? 'underground-marker' : '',
-        flags.isSeirei ? 'seirei-marker' : '',
-        flags.isChallenge ? 'challenge-marker' : ''
-    ].filter(Boolean).join(' ');
-
-    return L.divIcon({
-        className: classes,
-        html: `
-            <div style="position: relative;">
-                <img src="${base.url}" style="width: ${size[0]}px; height: ${size[1]}px; display: block;">
-            </div>
-        `,
-        iconSize: size,
-        iconAnchor: anchor,
-        popupAnchor: popupAnchor
-    });
-}
-
-// 宝箱の印ポイント
-const chestPoints = {
-    '普通の宝箱': 1,
-    '精巧な宝箱': 2,
-    '貴重な宝箱': 3,
-    '豪華な宝箱': 4,
-    '珍奇な宝箱': 5
-};
-
-// 有効なピンの種類
-const validTypes = Object.keys(baseIcons);
-
-// ピンデータのエクスポート
-window.exportPoints = function() {
-    const data = JSON.stringify(points, null, 2);
-    const blob = new Blob([data], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'genshin_points.json';
-    a.click();
-    URL.revokeObjectURL(url);
-};
-
-// ピンデータのインポート
-window.importPoints = function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        try {
-            const importedPoints = JSON.parse(e.target.result);
-            if (!Array.isArray(importedPoints)) throw new Error('Invalid JSON format');
-
-            const validPoints = importedPoints.filter(point => {
-                return (
-                    point.id &&
-                    point.mapId &&
-                    validTypes.includes(point.type) &&
-                    Array.isArray(point.coords) && point.coords.length === 2 &&
-                    (point.description === undefined || typeof point.description === 'string') &&
-                    (point.youtubeUrl === undefined || typeof point.youtubeUrl === 'string') &&
-                    (point.isUnderground === undefined || typeof point.isUnderground === 'boolean') &&
-                    (point.isSeirei === undefined || typeof point.isSeirei === 'boolean') &&
-                    (point.isChallenge === undefined || typeof point.isChallenge === 'boolean')
-                );
-            });
-
-            if (validPoints.length === 0) {
-                alert('有効なピンデータがありません');
-                return;
-            }
-
-            points = validPoints;
-            localStorage.setItem('genshinPoints', JSON.stringify(points));
-            renderPoints();
-            updateCounts();
-            alert(`ピンデータをインポートしました（${validPoints.length}件）`);
-        } catch (err) {
-            alert('インポートに失敗しました: ' + err.message);
-        }
-    };
-    reader.readAsText(file);
-};
-
-// ピンの数と印の累計を更新
-function updateCounts() {
-    const selectedTypes = Array.from(document.querySelectorAll('#drawer input[type="checkbox"]:checked')).map(cb => cb.value);
-    const countsDiv = document.getElementById('counts');
-    let html = '';
-
-    Object.keys(maps).forEach(region => {
-        Object.keys(maps[region].areas).forEach(area => {
-            const areaName = maps[region].areas[area].name;
-            const areaPoints = points.filter(p => p.mapId.startsWith(`${region}_${area}_`) && selectedTypes.includes(p.type));
-            const typeCounts = {};
-
-            selectedTypes.forEach(type => {
-                const pointsOfType = areaPoints.filter(p => p.type === type);
-                const categories = [];
-                pointsOfType.forEach(p => {
-                    const flags = [];
-                    if (p.isUnderground) flags.push('地下');
-                    if (p.isSeirei) flags.push('仙');
-                    if (p.isChallenge) flags.push('チャレンジ');
-                    const key = flags.length ? flags.join(', ') : '地上';
-                    typeCounts[`${type}_${key}`] = (typeCounts[`${type}_${key}`] || 0) + 1;
-                });
-            });
-
-            const chestTotal = points
-                .filter(p => p.mapId.startsWith(`${region}_${area}_`) && Object.keys(chestPoints).includes(p.type))
-                .reduce((sum, p) => sum + (chestPoints[p.type] || 0), 0);
-
-            html += `<p><b>${areaName}</b>:</p>`;
-            Object.keys(typeCounts).forEach(key => {
-                const [type, category] = key.split('_');
-                html += `<p>${type} (${category}): ${typeCounts[key]}</p>`;
-            });
-            if (chestTotal > 0) {
-                html += `<p>印: ${chestTotal}</p>`;
-            }
-        });
-    });
-
-    countsDiv.innerHTML = html || '<p>ピンなし</p>';
+// ピンデータの読み書き
+function loadPoints(region, area, layer) {
+    points = JSON.parse(localStorage.getItem(`genshinPoints_${region}_${area}_${layer}`)) || [];
+    console.log(`Loaded points for ${region}_${area}_${layer}:`, points);
     renderPoints();
 }
+function savePoints(region, area, layer) {
+    if (points.length > MAX_POINTS) points = points.slice(-MAX_POINTS);
+    localStorage.setItem(`genshinPoints_${region}_${area}_${layer}`, JSON.stringify(points));
+}
 
-// マップを切り替え
-function switchMap(region, area, layerId = 'main') {
-    try {
-        if (layerControl) layerControl.remove();
-        Object.values(currentLayers).forEach(layer => map.removeLayer(layer));
-        currentLayers = {};
+// ピンのアイコン定義
+const icons = {
+    '風神瞳': L.icon({ iconUrl: 'image/hujin.jpg', iconSize: [48, 48], iconAnchor: [24, 24], popupAnchor: [0, -24] }),
+    '岩神瞳': L.icon({ iconUrl: 'image/iwagami.jpg', iconSize: [48, 48], iconAnchor: [24, 24], popupAnchor: [0, -24] }),
+    '電神瞳': L.icon({ iconUrl: 'image/inazumahitomi.png', iconSize: [48, 48], iconAnchor: [24, 24], popupAnchor: [0, -24] }),
+    '草神瞳': L.icon({ iconUrl: 'image/sousin.png', iconSize: [48, 48], iconAnchor: [24, 24], popupAnchor: [0, -24] }),
+    '水神瞳': L.icon({ iconUrl: 'image/suijin.png', iconSize: [48, 48], iconAnchor: [24, 24], popupAnchor: [0, -24] }),
+    '炎神瞳': L.icon({ iconUrl: 'image/enjin.png', iconSize: [48, 48], iconAnchor: [24, 24], popupAnchor: [0, -24] }),
+    'チャレンジ': L.icon({ iconUrl: 'image/challenge.png', iconSize: [48, 48], iconAnchor: [24, 24], popupAnchor: [0, -24] }),
+    '仙霊': L.icon({ iconUrl: 'image/senrei.png', iconSize: [48, 48], iconAnchor: [24, 24], popupAnchor: [0, -24] }),
+    '立方体': L.icon({ iconUrl: 'image/square.png', iconSize: [48, 48], iconAnchor: [24, 24], popupAnchor: [0, -24] }),
+    '鍵紋1': L.icon({ iconUrl: 'image/key1.png', iconSize: [48, 48], iconAnchor: [24, 24], popupAnchor: [0, -24] }),
+    '鍵紋2': L.icon({ iconUrl: 'image/key2.png', iconSize: [48, 48], iconAnchor: [24, 24], popupAnchor: [0, -24] }),
+    '鍵紋3': L.icon({ iconUrl: 'image/key3.png', iconSize: [48, 48], iconAnchor: [24, 24], popupAnchor: [0, -24] })
+};
 
-        currentMapId = `${region}_${area}_${layerId}`;
-        console.log(`Switching to map: ${currentMapId}`);
-
-        const areaData = maps[region].areas[area];
-        if (!areaData || !areaData.layers[layerId]) {
-            throw new Error(`Invalid map data for ${currentMapId}`);
-        }
-
-        const imageBounds = areaData.layers[layerId].bounds;
-        const layerGroup = {};
-        Object.keys(areaData.layers).forEach(layerKey => {
-            const layerData = areaData.layers[layerKey];
-            console.log(`Loading layer: ${layerData.name}, image: ${layerData.image}`);
-            const layer = L.imageOverlay(layerData.image, layerData.bounds);
-            layer.on('error', () => {
-                console.error(`Failed to load image: ${layerData.image}`);
-                alert(`マップ画像の読み込みに失敗しました: ${layerData.name}`);
-            });
-            layer.on('load', () => {
-                console.log(`Successfully loaded image: ${layerData.image}`);
-            });
-            currentLayers[layerKey] = layer;
-            layerGroup[layerData.name] = layer;
-        });
-
-        currentLayers[layerId].addTo(map);
-        map.fitBounds(imageBounds);
-        map.setView([imageBounds[1][0] / 2, imageBounds[1][1] / 2], 0);
-        layerControl = L.control.layers(layerGroup, null, { collapsed: false }).addTo(map);
-        renderPoints();
-        updateCounts();
-    } catch (err) {
-        console.error('Error in switchMap:', err);
-        alert(`マップの切り替えに失敗しました: ${err.message}`);
-    }
+// 座標の正規化
+function normalizeCoords(coords, bounds) {
+    const [[minY, minX], [maxY, maxX]] = bounds;
+    const [y, x] = coords;
+    return [
+        Math.max(minY, Math.min(maxY, y)),
+        Math.max(minX, Math.min(maxX, x))
+    ];
 }
 
 // ピンをマップに描画
-function renderPoints() {
-    try {
-        map.eachLayer(layer => {
-            if (layer instanceof L.Marker) map.removeLayer(layer);
-        });
-
-        const zoom = map.getZoom();
-        const selectedTypes = Array.from(document.querySelectorAll('#drawer input[type="checkbox"]:checked')).map(cb => cb.value);
-
-        points.forEach(point => {
-            if (point.mapId === currentMapId && selectedTypes.includes(point.type)) {
-                if (!Array.isArray(point.coords) || point.coords.length !== 2 || isNaN(point.coords[0]) || isNaN(point.coords[1])) {
-                    console.error(`Invalid coordinates for point ${point.id}:`, point.coords);
-                    return;
-                }
-
-                const flags = {
-                    isUnderground: point.isUnderground,
-                    isSeirei: point.isSeirei,
-                    isChallenge: point.isChallenge
-                };
-                const icon = getIcon(point.type, zoom, flags);
-
-                const marker = L.marker(point.coords, {
-                    icon,
-                    type: point.type,
-                    mapId: point.mapId
-                }).addTo(map);
-
-                console.log(`Marker ${point.id}: coords=${point.coords}, iconSize=${icon.options.iconSize}, iconAnchor=${icon.options.iconAnchor}, type=${point.type}, flags=${JSON.stringify(flags)}`);
-
-                const flagTextArray = [];
-                if (point.isUnderground) flagTextArray.push('地下');
-                if (point.isSeirei) flagTextArray.push('仙');
-                if (point.isChallenge) flagTextArray.push('チャレンジ');
-                const flagText = flagTextArray.length ? ` (${flagTextArray.join(', ')})` : '';
+async function renderPoints() {
+    console.log('Rendering points:', points);
+    markers.forEach((marker, id) => {
+        if (!points.find(p => p.id === id)) {
+            map.removeLayer(marker);
+            markers.delete(id);
+        }
+    });
+    const region = document.getElementById('regionSelect').value;
+    const area = document.getElementById('areaSelect').value;
+    const layer = document.getElementById('layerSelect').value || 'main';
+    const bounds = maps[region].areas[area].layers[layer].bounds;
+    points.forEach(point => {
+        if (!markers.has(point.id)) {
+            try {
+                const normalizedCoords = normalizeCoords(point.coords, bounds);
+                const marker = L.marker(normalizedCoords, { icon: icons[point.type], type: point.type }).addTo(map);
                 const popupContent = `
-                    <b>${point.type}${flagText}</b><br>
-                    ${point.description || '（説明なし）'}
+                    <b>${point.type}</b><br>${point.description || '（説明なし）'}
                     <br><button class="edit" onclick="editPoint(${point.id})">編集</button>
                     <button onclick="deletePoint(${point.id})">削除</button>
                 `;
                 marker.bindPopup(popupContent);
-
                 if (point.youtubeUrl) {
-                    marker.on('click touchend', () => openVideoModal(point.youtubeUrl));
+                    marker.on('click', () => openVideoModal(point.youtubeUrl));
                 }
+                markers.set(point.id, marker);
+            } catch (e) {
+                console.error('Error rendering point:', point, e);
             }
-        });
-        console.log(`Rendered points for mapId: ${currentMapId}, count: ${points.filter(p => p.mapId === currentMapId).length}`);
-    } catch (err) {
-        console.error('Error in renderPoints:', err);
-    }
-}
-
-// ズーム時にピンのサイズを更新
-map.on('zoomend', () => {
-    renderPoints();
-});
-
-// ドロワーの開閉
-const toggleDrawer = document.getElementById('toggleDrawer');
-const drawer = document.getElementById('drawer');
-const closeDrawer = document.getElementById('closeDrawer');
-
-toggleDrawer.addEventListener('click', () => {
-    drawer.classList.toggle('open');
-});
-
-closeDrawer.addEventListener('click', () => {
-    drawer.classList.remove('open');
-});
-
-window.addEventListener('click', (event) => {
-    if (drawer.classList.contains('open') && !drawer.contains(event.target) && !toggleDrawer.contains(event.target)) {
-        drawer.classList.remove('open');
-    }
-});
-
-// ドロップダウンの初期化
-const regionSelect = document.getElementById('regionSelect');
-const areaSelect = document.getElementById('areaSelect');
-const layerSelect = document.getElementById('layerSelect');
-const layerLabel = document.getElementById('layerLabel');
-
-function updateAreaSelect(region) {
-    areaSelect.innerHTML = '';
-    const areas = maps[region].areas;
-    Object.keys(areas).forEach(areaKey => {
-        const option = document.createElement('option');
-        option.value = areaKey;
-        option.textContent = areas[areaKey].name;
-        areaSelect.appendChild(option);
+        }
     });
 }
 
-function updateLayerSelect(region, area) {
-    if (region === 'inazuma' && area === 'tsumei') {
-        layerSelect.innerHTML = '';
-        const layers = maps[region].areas[area].layers;
-        Object.keys(layers).forEach(layerKey => {
-            const option = document.createElement('option');
-            option.value = layerKey;
-            option.textContent = layers[layerKey].name;
-            layerSelect.appendChild(option);
-        });
-        layerLabel.style.display = 'inline';
-        layerSelect.style.display = 'inline';
-    } else {
-        layerLabel.style.display = 'none';
-        layerSelect.style.display = 'none';
-    }
-}
-
-regionSelect.addEventListener('change', () => {
-    const region = regionSelect.value;
-    updateAreaSelect(region);
-    const area = areaSelect.value;
-    updateLayerSelect(region, area);
-    switchMap(region, area);
-});
-
-areaSelect.addEventListener('change', () => {
-    const region = regionSelect.value;
-    const area = areaSelect.value;
-    updateLayerSelect(region, area);
-    const layerId = (region === 'inazuma' && area === 'tsumei') ? layerSelect.value : 'main';
-    switchMap(region, area, layerId);
-});
-
-layerSelect.addEventListener('change', () => {
-    const region = regionSelect.value;
-    const area = areaSelect.value;
-    const layerId = layerSelect.value;
-    switchMap(region, area, layerId);
-});
-
 // ピンの削除
-window.deletePoint = function(id) {
+window.deletePoint = async function(id) {
     points = points.filter(point => point.id !== id);
-    localStorage.setItem('genshinPoints', JSON.stringify(points));
-    renderPoints();
-    updateCounts();
+    const region = document.getElementById('regionSelect').value;
+    const area = document.getElementById('areaSelect').value;
+    const layer = document.getElementById('layerSelect').value || 'main';
+    savePoints(region, area, layer);
+    await renderPoints();
 };
 
 // ピンの編集
 window.editPoint = function(id) {
     const point = points.find(p => p.id === id);
     if (!point) return;
-
-    const pinModal = document.getElementById('pinModal');
-    setTimeout(() => {
-        pinModal.style.display = 'flex';
-    }, 100);
+    document.getElementById('pinModal').style.display = 'flex';
     document.getElementById('modalTitle').textContent = 'ピンを編集';
     document.querySelector(`input[name="type"][value="${point.type}"]`).checked = true;
-    document.getElementById('isUnderground').checked = point.isUnderground || false;
-    document.getElementById('isSeirei').checked = point.isSeirei || false;
-    document.getElementById('isChallenge').checked = point.isChallenge || false;
     document.getElementById('description').value = point.description || '';
     document.getElementById('youtubeUrl').value = point.youtubeUrl ? point.youtubeUrl.replace('embed/', 'watch?v=') : '';
     tempCoords = point.coords;
-
-    pinForm.onsubmit = function(e) {
+    map.once('click', e => {
+        tempCoords = [e.latlng.lat, e.latlng.lng];
+    });
+    pinForm.onsubmit = async function(e) {
         e.preventDefault();
         const youtubeUrl = document.getElementById('youtubeUrl').value;
         if (youtubeUrl && !youtubeUrl.match(/youtube\.com|youtu\.be/)) {
             alert('有効なYouTube URLを入力してください');
             return;
         }
+        const region = document.getElementById('regionSelect').value;
+        const area = document.getElementById('areaSelect').value;
+        const layer = document.getElementById('layerSelect').value || 'main';
+        const bounds = maps[region].areas[area].layers[layer].bounds;
         points = points.filter(p => p.id !== id);
         const updatedPoint = {
             id,
-            mapId: currentMapId,
             type: document.querySelector('input[name="type"]:checked').value,
-            coords: tempCoords,
-            isUnderground: document.getElementById('isUnderground').checked,
-            isSeirei: document.getElementById('isSeirei').checked,
-            isChallenge: document.getElementById('isChallenge').checked,
+            coords: normalizeCoords(tempCoords, bounds),
             description: document.getElementById('description').value || '',
             youtubeUrl: youtubeUrl ? youtubeUrl.replace('watch?v=', 'embed/') : ''
         };
         points.push(updatedPoint);
-        localStorage.setItem('genshinPoints', JSON.stringify(points));
-        renderPoints();
-        updateCounts();
+        savePoints(region, area, layer);
+        await renderPoints();
         closePinModal();
         pinForm.onsubmit = addPointHandler;
     };
 };
 
 // ピンの追加
-const addPointHandler = function(e) {
+const addPointHandler = async function(e) {
     e.preventDefault();
     const youtubeUrl = document.getElementById('youtubeUrl').value;
     if (youtubeUrl && !youtubeUrl.match(/youtube\.com|youtu\.be/)) {
         alert('有効なYouTube URLを入力してください');
         return;
     }
+    const region = document.getElementById('regionSelect').value;
+    const area = document.getElementById('areaSelect').value;
+    const layer = document.getElementById('layerSelect').value || 'main';
+    const bounds = maps[region].areas[area].layers[layer].bounds;
     const point = {
         id: Date.now(),
-        mapId: currentMapId,
         type: document.querySelector('input[name="type"]:checked').value,
-        coords: tempCoords,
-        isUnderground: document.getElementById('isUnderground').checked,
-        isSeirei: document.getElementById('isSeirei').checked,
-        isChallenge: document.getElementById('isChallenge').checked,
+        coords: normalizeCoords(tempCoords, bounds),
         description: document.getElementById('description').value || '',
         youtubeUrl: youtubeUrl ? youtubeUrl.replace('watch?v=', 'embed/') : ''
     };
     points.push(point);
-    localStorage.setItem('genshinPoints', JSON.stringify(points));
-    renderPoints();
-    updateCounts();
+    savePoints(region, area, layer);
+    await renderPoints();
     closePinModal();
 };
 
-// フォームの初期ハンドラ
+// フォームの初期ハンドラを設定
 const pinForm = document.getElementById('pinForm');
 pinForm.onsubmit = addPointHandler;
 
-// マップクリック/タッチでピン追加モーダル
+// マップクリックでピン追加モーダルを表示
 let tempCoords = null;
-map.on('click touchend', e => {
+map.on('click', e => {
     tempCoords = [e.latlng.lat, e.latlng.lng];
-    const pinModal = document.getElementById('pinModal');
-    console.log('Opening pin modal at coords:', tempCoords);
-    setTimeout(() => {
-        pinModal.style.display = 'flex';
-    }, 100);
+    document.getElementById('pinModal').style.display = 'flex';
     document.getElementById('modalTitle').textContent = 'ピンを追加';
     pinForm.reset();
     document.querySelector('input[name="type"][value="風神瞳"]').checked = true;
-    document.getElementById('isUnderground').checked = false;
-    document.getElementById('isSeirei').checked = false;
-    document.getElementById('isChallenge').checked = false;
     pinForm.onsubmit = addPointHandler;
 });
 
-// キャンセルボタン
+// キャンセルボタンの処理
 const cancelButton = document.getElementById('cancelButton');
 cancelButton.addEventListener('click', closePinModal);
-cancelButton.addEventListener('touchend', closePinModal);
 
-// 動画モーダル
+// 動画モーダルの処理
 const videoModal = document.getElementById('videoModal');
 const videoFrame = document.getElementById('videoFrame');
 const videoClose = document.getElementsByClassName('video-close')[0];
 
 function openVideoModal(url) {
     videoFrame.src = url;
-    setTimeout(() => {
-        videoModal.style.display = 'flex';
-    }, 100);
+    videoModal.style.display = 'flex';
 }
 
 videoClose.onclick = function() {
     videoModal.style.display = 'none';
     videoFrame.src = '';
 };
-videoClose.addEventListener('touchend', () => {
-    videoModal.style.display = 'none';
-    videoFrame.src = '';
-});
 
-// ピンモーダル
+// ピンモーダルの処理
 const pinModal = document.getElementById('pinModal');
 const pinClose = document.getElementsByClassName('pin-close')[0];
 
@@ -655,8 +331,8 @@ function closePinModal() {
 }
 
 pinClose.onclick = closePinModal;
-pinClose.addEventListener('touchend', closePinModal);
 
+// モーダルの外をクリックで閉じる
 window.onclick = function(event) {
     if (event.target == videoModal) {
         videoModal.style.display = 'none';
@@ -666,12 +342,111 @@ window.onclick = function(event) {
         closePinModal();
     }
 };
-window.addEventListener('touchend', (event) => {
-    if (event.target == videoModal) {
-        videoModal.style.display = 'none';
-        videoFrame.src = '';
+
+// マップの初期化（動的）
+let currentOverlay = null;
+function initializeMap(region, area, layer) {
+    try {
+        const mapData = maps[region].areas[area].layers[layer];
+        if (currentOverlay) {
+            map.removeLayer(currentOverlay);
+        }
+        currentOverlay = L.imageOverlay(mapData.image, mapData.bounds).addTo(map);
+        map.fitBounds(mapData.bounds);
+        loadPoints(region, area, layer);
+    } catch (e) {
+        console.error('Error in initializeMap:', e);
+        if (currentOverlay) {
+            map.removeLayer(currentOverlay);
+        }
+        currentOverlay = L.imageOverlay('image/mondstadt.png', [[0, 0], [2765, 3878]]).addTo(map);
+        map.fitBounds([[0, 0], [2765, 3878]]);
+        loadPoints('mondstadt', 'mondstadt', 'main');
     }
-    if (event.target == pinModal) {
-        closePinModal();
+}
+
+// エリアとレイヤーの更新
+function updateRegionSelect() {
+    const regionSelect = document.getElementById('regionSelect');
+    regionSelect.innerHTML = '';
+    const regions = {
+        mondstadt: 'モンド',
+        liyue: '璃月',
+        inazuma: '稲妻',
+        sumeru: 'スメール',
+        fontaine: 'フォンテーヌ',
+        natlan: 'ナタ'
+    };
+    Object.keys(regions).forEach(regionKey => {
+        const option = document.createElement('option');
+        option.value = regionKey;
+        option.textContent = regions[regionKey];
+        regionSelect.appendChild(option);
+    });
+}
+function updateAreaSelect() {
+    const region = document.getElementById('regionSelect').value;
+    const areaSelect = document.getElementById('areaSelect');
+    areaSelect.innerHTML = '';
+    Object.keys(maps[region].areas).forEach(areaKey => {
+        const option = document.createElement('option');
+        option.value = areaKey;
+        option.textContent = maps[region].areas[areaKey].name;
+        areaSelect.appendChild(option);
+    });
+    updateLayerSelect();
+}
+function updateLayerSelect() {
+    const region = document.getElementById('regionSelect').value;
+    const area = document.getElementById('areaSelect').value;
+    const layerSelect = document.getElementById('layerSelect');
+    const layerLabel = document.getElementById('layerLabel');
+    layerSelect.innerHTML = '';
+    try {
+        const layers = maps[region].areas[area].layers;
+        if (Object.keys(layers).length > 1) {
+            layerLabel.style.display = 'inline';
+            layerSelect.style.display = 'inline';
+            Object.keys(layers).forEach(layerKey => {
+                const option = document.createElement('option');
+                option.value = layerKey;
+                option.textContent = layers[layerKey].name;
+                layerSelect.appendChild(option);
+            });
+        } else {
+            layerLabel.style.display = 'none';
+            layerSelect.style.display = 'none';
+        }
+    } catch (e) {
+        console.error('Error in updateLayerSelect:', e);
+        layerLabel.style.display = 'none';
+        layerSelect.style.display = 'none';
     }
+}
+
+// イベントリスナー
+document.getElementById('regionSelect').addEventListener('change', () => {
+    updateAreaSelect();
+    const region = document.getElementById('regionSelect').value;
+    const area = document.getElementById('areaSelect').value;
+    const layer = document.getElementById('layerSelect').value || 'main';
+    initializeMap(region, area, layer);
 });
+document.getElementById('areaSelect').addEventListener('change', () => {
+    updateLayerSelect();
+    const region = document.getElementById('regionSelect').value;
+    const area = document.getElementById('areaSelect').value;
+    const layer = document.getElementById('layerSelect').value || 'main';
+    initializeMap(region, area, layer);
+});
+document.getElementById('layerSelect').addEventListener('change', () => {
+    const region = document.getElementById('regionSelect').value;
+    const area = document.getElementById('areaSelect').value;
+    const layer = document.getElementById('layerSelect').value;
+    initializeMap(region, area, layer);
+});
+
+// 初期化
+updateRegionSelect();
+updateAreaSelect();
+initializeMap('mondstadt', 'mondstadt', 'main');
