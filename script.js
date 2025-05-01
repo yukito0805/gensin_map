@@ -1,12 +1,24 @@
 // マップの初期化
-const map = L.map('map').setView([35.6762, 139.6503], 10); // 初期座標とズームレベル
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        const map = L.map('map', {
+            crs: L.CRS.Simple,
+            minZoom: -5,
+            maxZoom: 5,
+            renderer: L.canvas()
+        });
 
-// ← この直後に追加
-map.on('click', function(e) {
-  console.log('クリック位置:', e.latlng);
+        map.on('click', function(e) {
+            console.log('クリック位置:', e.latlng);
+        });
+
+        updateAreaSelect('mondstadt');
+        updateLayerSelect('mondstadt', 'mondstadt');
+        switchMap('mondstadt', 'mondstadt');
+    } catch (err) {
+        console.error('Error initializing map:', err);
+        alert('マップの初期化に失敗しました');
+    }
 });
 
 // マップ定義
@@ -18,7 +30,7 @@ const maps = {
                 layers: {
                     main: {
                         name: 'モンドマップ',
-                        image: 'image/mondstadt.png',
+                        image: '/image/mondstadt.png',
                         bounds: [[0, 0], [2765, 3878]]
                     }
                 }
@@ -32,7 +44,7 @@ const maps = {
                 layers: {
                     main: {
                         name: '璃月マップ',
-                        image: 'image/liyue.png',
+                        image: '/image/liyue.png',
                         bounds: [[0, 0], [4169, 4571]]
                     }
                 }
@@ -42,7 +54,7 @@ const maps = {
                 layers: {
                     main: {
                         name: '層岩巨淵マップ',
-                        image: 'image/natlan_P0.png',
+                        image: '/image/natlan_P0.png',
                         bounds: [[0, 0], [1677, 1893]]
                     }
                 }
@@ -56,7 +68,7 @@ const maps = {
                 layers: {
                     main: {
                         name: '稲妻マップ',
-                        image: 'image/inazuma1_P0.png',
+                        image: '/image/inazuma1_P0.png',
                         bounds: [[0, 0], [5568, 6018]]
                     }
                 }
@@ -66,7 +78,7 @@ const maps = {
                 layers: {
                     main: {
                         name: '淵下宮マップ',
-                        image: 'image/inazuma_P0.png',
+                        image: '/image/inazuma_P0.png',
                         bounds: [[0, 0], [3018, 3171]]
                     }
                 }
@@ -80,7 +92,7 @@ const maps = {
                 layers: {
                     main: {
                         name: 'スメールマップ',
-                        image: 'image/sumeru_P0_highres.png',
+                        image: '/image/sumeru_P0_highres.png',
                         bounds: [[0, 0], [5578, 5543]]
                     }
                 }
@@ -94,7 +106,7 @@ const maps = {
                 layers: {
                     main: {
                         name: 'フォンテーヌマップ',
-                        image: 'image/fontaine_map.png',
+                        image: '/image/fontaine_map.png',
                         bounds: [[0, 0], [4356, 3175]]
                     }
                 }
@@ -104,7 +116,7 @@ const maps = {
                 layers: {
                     main: {
                         name: '往日の海マップ',
-                        image: 'image/map34_P0.png',
+                        image: '/image/map34_P0.png',
                         bounds: [[0, 0], [1014, 1998]]
                     }
                 }
@@ -118,7 +130,7 @@ const maps = {
                 layers: {
                     main: {
                         name: 'ナタマップ',
-                        image: 'image/natlan_N1.png',
+                        image: '/image/natlan_N1.png',
                         bounds: [[0, 0], [5896, 5432]]
                     }
                 }
@@ -128,7 +140,7 @@ const maps = {
                 layers: {
                     main: {
                         name: '古の聖山マップ',
-                        image: 'image/map36_P0.png',
+                        image: '/image/map36_P0.png',
                         bounds: [[0, 0], [3117, 2634]]
                     }
                 }
@@ -136,9 +148,6 @@ const maps = {
         }
     }
 };
-
-
-
 
 // ピンのデータ管理
 let points = JSON.parse(localStorage.getItem('genshinPoints')) || [];
@@ -148,50 +157,51 @@ let currentLayers = {};
 
 // ピンのアイコン定義
 const baseIcons = {
-    '風神瞳': { url: 'image/hujin.jpg', size: [48, 48], anchor: [24, 24] },
-    '岩神瞳': { url: 'image/iwagami.jpg', size: [48, 48], anchor: [24, 24] },
-    '電神瞳': { url: 'image/inazumahitomi.png', size: [48, 48], anchor: [24, 24] },
-    '草神瞳': { url: 'image/sousin.png', size: [48, 48], anchor: [24, 24] },
-    '水神瞳': { url: 'image/suijin.png', size: [48, 48], anchor: [24, 24] },
-    '炎神瞳': { url: 'image/enjin.png', size: [48, 48], anchor: [24, 24] },
-    'チャレンジ': { url: 'image/challenge.png', size: [48, 48], anchor: [24, 24] },
-    '仙霊': { url: 'image/senrei.png', size: [48, 48], anchor: [24, 24] },
-    '立方体': { url: 'image/square.png', size: [48, 48], anchor: [24, 24] },
-    '鍵紋1': { url: 'image/key1.png', size: [48, 48], anchor: [24, 24] },
-    '鍵紋2': { url: 'image/key2.png', size: [48, 48], anchor: [24, 24] },
-    '鍵紋3': { url: 'image/key3.png', size: [48, 48], anchor: [24, 24] },
-    '鍵紋4': { url: 'image/key4.png', size: [48, 48], anchor: [24, 24] },
-    '鍵紋5': { url: 'image/key5.png', size: [48, 48], anchor: [24, 24] },
-    '雷霊': { url: 'image/rairei.png', size: [48, 48], anchor: [24, 24] },
-
-    'アランナラ': { url: 'image/arannara.png', size: [48, 48], anchor: [24, 24] },
-    'スメールギミック': { url: 'image/SGimmick.png', size: [48, 48], anchor: [24, 24] },
-    '元素石碑': { url: 'image/sekihi.png', size: [48, 48], anchor: [24, 24] },
-    '短火装置': { url: 'image/dai.png', size: [48, 48], anchor: [24, 24] },
-    '死域': { url: 'image/shiki.png', size: [48, 48], anchor: [24, 24] },
-    'リーフコア': { url: 'image/leaf.png', size: [48, 48], anchor: [24, 24] },
-
-    '普通の宝箱': { url: 'image/hutu.png', size: [48, 48], anchor: [24, 24] },
-    '精巧な宝箱': { url: 'image/seikou.png', size: [48, 48], anchor: [24, 24] },
-    '貴重な宝箱': { url: 'image/kityou.png', size: [48, 48], anchor: [24, 24] },
-    '豪華な宝箱': { url: 'image/gouka.png', size: [48, 48], anchor: [24, 24] },
-    '珍奇な宝箱': { url: 'image/tinki.png', size: [48, 48], anchor: [24, 24] }
+    '風神瞳': { url: '/image/hujin.jpg', size: [48, 48], anchor: [24, 24] },
+    '岩神瞳': { url: '/image/iwagami.jpg', size: [48, 48], anchor: [24, 24] },
+    '電神瞳': { url: '/image/inazumahitomi.png', size: [48, 48], anchor: [24, 24] },
+    '草神瞳': { url: '/image/sousin.png', size: [48, 48], anchor: [24, 24] },
+    '水神瞳': { url: '/image/suijin.png', size: [48, 48], anchor: [24, 24] },
+    '炎神瞳': { url: '/image/enjin.png', size: [48, 48], anchor: [24, 24] },
+    'チャレンジ': { url: '/image/challenge.png', size: [48, 48], anchor: [24, 24] },
+    '仙霊': { url: '/image/senrei.png', size: [48, 48], anchor: [24, 24] },
+    '立方体': { url: '/image/square.png', size: [48, 48], anchor: [24, 24] },
+    '鍵紋1': { url: '/image/key1.png', size: [48, 48], anchor: [24, 24] },
+    '鍵紋2': { url: '/image/key2.png', size: [48, 48], anchor: [24, 24] },
+    '鍵紋3': { url: '/image/key3.png', size: [48, 48], anchor: [24, 24] },
+    '鍵紋4': { url: '/image/key4.png', size: [48, 48], anchor: [24, 24] },
+    '鍵紋5': { url: '/image/key5.png', size: [48, 48], anchor: [24, 24] },
+    '雷霊': { url: '/image/rairei.png', size: [48, 48], anchor: [24, 24] },
+    'アランナラ': { url: '/image/arannara.png', size: [48, 48], anchor: [24, 24] },
+    'スメールギミック': { url: '/image/SGimmick.png', size: [48, 48], anchor: [24, 24] },
+    '元素石碑': { url: '/image/sekihi.png', size: [48, 48], anchor: [24, 24] },
+    '短火装置': { url: '/image/dai.png', size: [48, 48], anchor: [24, 24] },
+    '死域': { url: '/image/shiki.png', size: [48, 48], anchor: [24, 24] },
+    'リーフコア': { url: '/image/leaf.png', size: [48, 48], anchor: [24, 24] },
+    '普通の宝箱': { url: '/image/hutu.png', size: [48, 48], anchor: [24, 24] },
+    '精巧な宝箱': { url: '/image/seikou.png', size: [48, 48], anchor: [24, 24] },
+    '貴重な宝箱': { url: '/image/kityou.png', size: [48, 48], anchor: [24, 24] },
+    '豪華な宝箱': { url: '/image/gouka.png', size: [48, 48], anchor: [24, 24] },
+    '珍奇な宝箱': { url: '/image/tinki.png', size: [48, 48], anchor: [24, 24] }
 };
 
 // 動的アイコン生成
 function getIcon(type, zoom, flags = {}) {
+    if (!baseIcons[type]) {
+        console.error(`Icon type ${type} not found in baseIcons`);
+        return L.divIcon({ html: '<div>?</div>', iconSize: [16, 16] });
+    }
     const base = baseIcons[type];
-    const scale = 1 + (zoom / 10); // スケール計算は維持
+    const scale = 1 + (zoom / 10);
     const size = [
         Math.max(16, Math.min(96, base.size[0] * scale)),
         Math.max(16, Math.min(96, base.size[1] * scale))
     ];
-    // アンカーポイントをアイコンの中央下に設定
     const anchor = [
-        size[0] / 2, // 横中央
-        size[1] // 縦は画像の下端（ピンの先端）
+        size[0] / 2,
+        size[1] + (navigator.userAgent.includes('iPad') ? 2 : 0) // iPad補正
     ];
-    const popupAnchor = [0, -size[1]]; // ポップアップをピンの上部に
+    const popupAnchor = [0, -size[1]];
 
     const classes = [
         'marker-container',
@@ -203,8 +213,8 @@ function getIcon(type, zoom, flags = {}) {
     return L.divIcon({
         className: classes,
         html: `
-            <div>
-                <img src="${base.url}" style="width: ${size[0]}px; height: ${size[1]}px;">
+            <div style="position: relative;">
+                <img src="${base.url}" style="width: ${size[0]}px; height: ${size[1]}px; display: block;">
             </div>
         `,
         iconSize: size,
@@ -325,29 +335,36 @@ function updateCounts() {
 
 // マップを切り替え
 function switchMap(region, area, layerId = 'main') {
-    if (layerControl) layerControl.remove();
-    Object.values(currentLayers).forEach(layer => map.removeLayer(layer));
-    currentLayers = {};
-
-    currentMapId = `${region}_${area}_${layerId}`;
-    console.log(`Switching to map: ${currentMapId}`);
-
-    const areaData = maps[region].areas[area];
-    const imageBounds = areaData.layers[layerId].bounds;
-    const layerGroup = {};
-    Object.keys(areaData.layers).forEach(layerKey => {
-        const layerData = areaData.layers[layerKey];
-        console.log(`Loading layer: ${layerData.name}, image: ${layerData.image}`);
-        const layer = L.imageOverlay(layerData.image, layerData.bounds);
-        layer.on('error', () => {
-            console.error(`Failed to load image: ${layerData.image}`);
-            alert(`マップ画像の読み込みに失敗しました: ${layerData.name}`);
-        });
-        currentLayers[layerKey] = layer;
-        layerGroup[layerData.name] = layer;
-    });
-
     try {
+        if (layerControl) layerControl.remove();
+        Object.values(currentLayers).forEach(layer => map.removeLayer(layer));
+        currentLayers = {};
+
+        currentMapId = `${region}_${area}_${layerId}`;
+        console.log(`Switching to map: ${currentMapId}`);
+
+        const areaData = maps[region].areas[area];
+        if (!areaData || !areaData.layers[layerId]) {
+            throw new Error(`Invalid map data for ${currentMapId}`);
+        }
+
+        const imageBounds = areaData.layers[layerId].bounds;
+        const layerGroup = {};
+        Object.keys(areaData.layers).forEach(layerKey => {
+            const layerData = areaData.layers[layerKey];
+            console.log(`Loading layer: ${layerData.name}, image: ${layerData.image}`);
+            const layer = L.imageOverlay(layerData.image, layerData.bounds);
+            layer.on('error', () => {
+                console.error(`Failed to load image: ${layerData.image}`);
+                alert(`マップ画像の読み込みに失敗しました: ${layerData.name}`);
+            });
+            layer.on('load', () => {
+                console.log(`Successfully loaded image: ${layerData.image}`);
+            });
+            currentLayers[layerKey] = layer;
+            layerGroup[layerData.name] = layer;
+        });
+
         currentLayers[layerId].addTo(map);
         map.fitBounds(imageBounds);
         map.setView([imageBounds[1][0] / 2, imageBounds[1][1] / 2], 0);
@@ -356,22 +373,22 @@ function switchMap(region, area, layerId = 'main') {
         updateCounts();
     } catch (err) {
         console.error('Error in switchMap:', err);
-        alert('マップの切り替えに失敗しました');
+        alert(`マップの切り替えに失敗しました: ${err.message}`);
     }
 }
 
 // ピンをマップに描画
 function renderPoints() {
-    map.eachLayer(layer => {
-        if (layer instanceof L.Marker) map.removeLayer(layer);
-    });
+    try {
+        map.eachLayer(layer => {
+            if (layer instanceof L.Marker) map.removeLayer(layer);
+        });
 
-    const zoom = map.getZoom();
-    const selectedTypes = Array.from(document.querySelectorAll('#drawer input[type="checkbox"]:checked')).map(cb => cb.value);
+        const zoom = map.getZoom();
+        const selectedTypes = Array.from(document.querySelectorAll('#drawer input[type="checkbox"]:checked')).map(cb => cb.value);
 
-    points.forEach(point => {
-        if (point.mapId === currentMapId && selectedTypes.includes(point.type)) {
-            try {
+        points.forEach(point => {
+            if (point.mapId === currentMapId && selectedTypes.includes(point.type)) {
                 if (!Array.isArray(point.coords) || point.coords.length !== 2 || isNaN(point.coords[0]) || isNaN(point.coords[1])) {
                     console.error(`Invalid coordinates for point ${point.id}:`, point.coords);
                     return;
@@ -390,7 +407,6 @@ function renderPoints() {
                     mapId: point.mapId
                 }).addTo(map);
 
-                // デバッグログ
                 console.log(`Marker ${point.id}: coords=${point.coords}, iconSize=${icon.options.iconSize}, iconAnchor=${icon.options.iconAnchor}, type=${point.type}, flags=${JSON.stringify(flags)}`);
 
                 const flagTextArray = [];
@@ -409,12 +425,12 @@ function renderPoints() {
                 if (point.youtubeUrl) {
                     marker.on('click touchend', () => openVideoModal(point.youtubeUrl));
                 }
-            } catch (err) {
-                console.error(`Error rendering point ${point.id}:`, err);
             }
-        }
-    });
-    console.log(`Rendered points for mapId: ${currentMapId}, count: ${points.filter(p => p.mapId === currentMapId).length}`);
+        });
+        console.log(`Rendered points for mapId: ${currentMapId}, count: ${points.filter(p => p.mapId === currentMapId).length}`);
+    } catch (err) {
+        console.error('Error in renderPoints:', err);
+    }
 }
 
 // ズーム時にピンのサイズを更新
@@ -498,15 +514,6 @@ layerSelect.addEventListener('change', () => {
     const layerId = layerSelect.value;
     switchMap(region, area, layerId);
 });
-
-try {
-    updateAreaSelect('mondstadt');
-    updateLayerSelect('mondstadt', 'mondstadt');
-    switchMap('mondstadt', 'mondstadt');
-} catch (err) {
-    console.error('Error initializing map:', err);
-    alert('マップの初期化に失敗しました');
-}
 
 // ピンの削除
 window.deletePoint = function(id) {
