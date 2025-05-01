@@ -1,9 +1,9 @@
-map.on('click', function(e) {
-  // スクロールやズーム時の誤差を回避するため、ピクセル位置から緯度経度を再取得
-  const point = map.latLngToContainerPoint(e.latlng);
-  const latlng = map.containerPointToLatLng(point);
-
-  L.marker(latlng).addTo(map);
+// マップの初期化
+const map = L.map('map', {
+    crs: L.CRS.Simple,
+    minZoom: -5,
+    maxZoom: 5,
+    renderer: L.canvas()
 });
 
 // ← この直後に追加
@@ -82,8 +82,8 @@ const maps = {
                 layers: {
                     main: {
                         name: 'スメールマップ',
-                        image: 'image/sumeru.png',
-                        bounds: [[0, 0], [6000, 5120]]
+                        image: 'image/sumeru_P0_highres.png',
+                        bounds: [[0, 0], [5578, 5543]]
                     }
                 }
             }
@@ -183,30 +183,35 @@ const baseIcons = {
 // 動的アイコン生成
 function getIcon(type, zoom, flags = {}) {
     const base = baseIcons[type];
-    const scale = 1 + (zoom / 10);
+    const scale = 1 + (zoom / 10); // スケール計算は維持
     const size = [
         Math.max(16, Math.min(96, base.size[0] * scale)),
         Math.max(16, Math.min(96, base.size[1] * scale))
     ];
+    // アンカーポイントをアイコンの中央下に設定
     const anchor = [
-        Math.max(8, Math.min(48, base.anchor[0] * scale)),
-        Math.max(8, Math.min(48, base.anchor[1] * scale))
+        size[0] / 2, // 横中央
+        size[1] // 縦は画像の下端（ピンの先端）
     ];
+    const popupAnchor = [0, -size[1]]; // ポップアップをピンの上部に
+
     const classes = [
         'marker-container',
         flags.isUnderground ? 'underground-marker' : '',
         flags.isSeirei ? 'seirei-marker' : '',
         flags.isChallenge ? 'challenge-marker' : ''
     ].filter(Boolean).join(' ');
+
     return L.divIcon({
         className: classes,
         html: `
-            <div style="--scale: ${scale}">
+            <div>
                 <img src="${base.url}" style="width: ${size[0]}px; height: ${size[1]}px;">
             </div>
         `,
         iconSize: size,
-        iconAnchor: anchor
+        iconAnchor: anchor,
+        popupAnchor: popupAnchor
     });
 }
 
@@ -365,23 +370,36 @@ function renderPoints() {
 
     const zoom = map.getZoom();
     const selectedTypes = Array.from(document.querySelectorAll('#drawer input[type="checkbox"]:checked')).map(cb => cb.value);
+
     points.forEach(point => {
         if (point.mapId === currentMapId && selectedTypes.includes(point.type)) {
             try {
+                if (!Array.isArray(point.coords) || point.coords.length !== 2 || isNaN(point.coords[0]) || isNaN(point.coords[1])) {
+                    console.error(`Invalid coordinates for point ${point.id}:`, point.coords);
+                    return;
+                }
+
+                const flags = {
+                    isUnderground: point.isUnderground,
+                    isSeirei: point.isSeirei,
+                    isChallenge: point.isChallenge
+                };
+                const icon = getIcon(point.type, zoom, flags);
+
                 const marker = L.marker(point.coords, {
-                    icon: getIcon(point.type, zoom, {
-                        isUnderground: point.isUnderground,
-                        isSeirei: point.isSeirei,
-                        isChallenge: point.isChallenge
-                    }),
+                    icon,
                     type: point.type,
                     mapId: point.mapId
                 }).addTo(map);
-                const flags = [];
-                if (point.isUnderground) flags.push('地下');
-                if (point.isSeirei) flags.push('仙');
-                if (point.isChallenge) flags.push('チャレンジ');
-                const flagText = flags.length ? ` (${flags.join(', ')})` : '';
+
+                // デバッグログ
+                console.log(`Marker ${point.id}: coords=${point.coords}, iconSize=${icon.options.iconSize}, iconAnchor=${icon.options.iconAnchor}, type=${point.type}, flags=${JSON.stringify(flags)}`);
+
+                const flagTextArray = [];
+                if (point.isUnderground) flagTextArray.push('地下');
+                if (point.isSeirei) flagTextArray.push('仙');
+                if (point.isChallenge) flagTextArray.push('チャレンジ');
+                const flagText = flagTextArray.length ? ` (${flagTextArray.join(', ')})` : '';
                 const popupContent = `
                     <b>${point.type}${flagText}</b><br>
                     ${point.description || '（説明なし）'}
@@ -389,6 +407,7 @@ function renderPoints() {
                     <button onclick="deletePoint(${point.id})">削除</button>
                 `;
                 marker.bindPopup(popupContent);
+
                 if (point.youtubeUrl) {
                     marker.on('click touchend', () => openVideoModal(point.youtubeUrl));
                 }
