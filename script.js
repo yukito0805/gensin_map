@@ -149,34 +149,34 @@ let currentLayers = {};
 
 console.log('script.js: Points loaded:', points);
 
-// ピンのアイコン定義
+// ピンのアイコン定義（アンカーポイントを固定値で定義）
 const baseIcons = {
-    '風神瞳': { url: './image/hujin.jpg', size: [48, 48], anchor: [24, 24] },
-    '岩神瞳': { url: './image/iwagami.jpg', size: [48, 48], anchor: [24, 24] },
-    '電神瞳': { url: './image/inazumahitomi.png', size: [48, 48], anchor: [24, 24] },
-    '草神瞳': { url: './image/sousin.png', size: [48, 48], anchor: [24, 24] },
-    '水神瞳': { url: './image/suijin.png', size: [48, 48], anchor: [24, 24] },
-    '炎神瞳': { url: './image/enjin.png', size: [48, 48], anchor: [24, 24] },
-    'チャレンジ': { url: './image/challenge.png', size: [48, 48], anchor: [24, 24] },
-    '仙霊': { url: './image/senrei.png', size: [48, 48], anchor: [24, 24] },
-    '立方体': { url: './image/square.png', size: [48, 48], anchor: [24, 24] },
-    '鍵紋1': { url: './image/key1.png', size: [48, 48], anchor: [24, 24] },
-    '鍵紋2': { url: './image/key2.png', size: [48, 48], anchor: [24, 24] },
-    '鍵紋3': { url: './image/key3.png', size: [48, 48], anchor: [24, 24] },
-    '鍵紋4': { url: './image/key4.png', size: [48, 48], anchor: [24, 24] },
-    '鍵紋5': { url: './image/key5.png', size: [48, 48], anchor: [24, 24] },
-    '雷霊': { url: './image/rairei.png', size: [48, 48], anchor: [24, 24] },
-    'アランナラ': { url: './image/arannara.png', size: [48, 48], anchor: [24, 24] },
-    'スメールギミック': { url: './image/sgimmick.png', size: [48, 48], anchor: [24, 24] },
-    '元素石碑': { url: './image/sekihi.png', size: [48, 48], anchor: [24, 24] },
-    '短火装置': { url: './image/dai.png', size: [48, 48], anchor: [24, 24] },
-    '死域': { url: './image/shiki.png', size: [48, 48], anchor: [24, 24] },
-    'リーフコア': { url: './image/leaf.png', size: [48, 48], anchor: [24, 24] },
-    '普通の宝箱': { url: './image/hutu.png', size: [48, 48], anchor: [24, 24] },
-    '精巧な宝箱': { url: './image/seikou.png', size: [48, 48], anchor: [24, 24] },
-    '貴重な宝箱': { url: './image/kityou.png', size: [48, 48], anchor: [24, 24] },
-    '豪華な宝箱': { url: './image/gouka.png', size: [48, 48], anchor: [24, 24] },
-    '珍奇な宝箱': { url: './image/tinki.png', size: [48, 48], anchor: [24, 24] }
+    '風神瞳': { url: './image/hujin.jpg', size: [48, 48], anchor: [24, 38] },
+    '岩神瞳': { url: './image/iwagami.jpg', size: [48, 48], anchor: [24, 38] },
+    '電神瞳': { url: './image/inazumahitomi.png', size: [48, 48], anchor: [24, 38] },
+    '草神瞳': { url: './image/sousin.png', size: [48, 48], anchor: [24, 38] },
+    '水神瞳': { url: './image/suijin.png', size: [48, 48], anchor: [24, 38] },
+    '炎神瞳': { url: './image/enjin.png', size: [48, 48], anchor: [24, 38] },
+    'チャレンジ': { url: './image/challenge.png', size: [48, 48], anchor: [24, 38] },
+    '仙霊': { url: './image/senrei.png', size: [48, 48], anchor: [24, 38] },
+    '立方体': { url: './image/square.png', size: [48, 48], anchor: [24, 38] },
+    '鍵紋1': { url: './image/key1.png', size: [48, 48], anchor: [24, 38] },
+    '鍵紋2': { url: './image/key2.png', size: [48, 48], anchor: [24, 38] },
+    '鍵紋3': { url: './image/key3.png', size: [48, 48], anchor: [24, 38] },
+    '鍵紋4': { url: './image/key4.png', size: [48, 48], anchor: [24, 38] },
+    '鍵紋5': { url: './image/key5.png', size: [48, 48], anchor: [24, 38] },
+    '雷霊': { url: './image/rairei.png', size: [48, 48], anchor: [24, 38] },
+    'アランナラ': { url: './image/arannara.png', size: [48, 48], anchor: [24, 38] },
+    'スメールギミック': { url: './image/sgimmick.png', size: [48, 48], anchor: [24, 38] },
+    '元素石碑': { url: './image/sekihi.png', size: [48, 48], anchor: [24, 38] },
+    '短火装置': { url: './image/dai.png', size: [48, 48], anchor: [24, 38] },
+    '死域': { url: './image/shiki.png', size: [48, 48], anchor: [24, 38] },
+    'リーフコア': { url: './image/leaf.png', size: [48, 48], anchor: [24, 38] },
+    '普通の宝箱': { url: './image/hutu.png', size: [48, 48], anchor: [24, 38] },
+    '精巧な宝箱': { url: './image/seikou.png', size: [48, 48], anchor: [24, 38] },
+    '貴重な宝箱': { url: './image/kityou.png', size: [48, 48], anchor: [24, 38] },
+    '豪華な宝箱': { url: './image/gouka.png', size: [48, 48], anchor: [24, 38] },
+    '珍奇な宝箱': { url: './image/tinki.png', size: [48, 48], anchor: [24, 38] }
 };
 
 // 座標の正規化
@@ -196,17 +196,20 @@ function getIcon(type, zoom, flags = {}) {
         console.error(`Icon not found for type: ${type}`);
         return L.divIcon({ className: 'marker-container', html: '<div>⚠️</div>', iconSize: [48, 48] });
     }
-    const scale = 1 + (zoom / 10);
+
+    // ズームレベルに応じたスケーリング（調整済み）
+    const scale = Math.max(0.5, Math.min(2, 1 + (zoom * 0.05))); // ズームレベルごとのスケールを抑える
     const size = [
-        Math.max(16, Math.min(96, base.size[0] * scale)),
-        Math.max(16, Math.min(96, base.size[1] * scale))
+        base.size[0] * scale,
+        base.size[1] * scale
     ];
-    // アンカーポイントをアイコンの中心に設定（ピンの先端を調整）
+
+    // アンカーポイントはスケーリングに依存しない（固定値を使用）
     const anchor = [
-        size[0] / 2, // 横中央
-        size[1] * 0.8 // 縦はアイコンの下端に近づける（ピンの先端をクリック位置に近づける）
+        base.anchor[0] * scale, // スケールに合わせて調整
+        base.anchor[1] * scale  // スケールに合わせて調整（ピンの先端がズレないように）
     ];
-    const popupAnchor = [0, -size[1] * 0.8]; // ポップアップをピンの上部に
+    const popupAnchor = [0, -base.anchor[1] * scale]; // ポップアップ位置もスケールに合わせる
 
     const classes = [
         'marker-container',
@@ -215,7 +218,7 @@ function getIcon(type, zoom, flags = {}) {
         flags.isChallenge ? 'challenge-marker' : ''
     ].filter(Boolean).join(' ');
 
-    console.log(`Icon for ${type}: size=${size}, anchor=${anchor}, popupAnchor=${popupAnchor}`);
+    console.log(`Icon for ${type}: zoom=${zoom}, scale=${scale}, size=${size}, anchor=${anchor}, popupAnchor=${popupAnchor}`);
 
     return L.divIcon({
         className: classes,
