@@ -1,10 +1,8 @@
 // マップの初期化
-const map = L.map('map', {
-    crs: L.CRS.Simple,
-    minZoom: -5,
-    maxZoom: 5,
-    renderer: L.canvas()
-});
+const map = L.map('map').setView([35.6762, 139.6503], 10); // 初期座標とズームレベル
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
 
 // ← この直後に追加
 map.on('click', function(e) {
