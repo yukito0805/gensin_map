@@ -1,9 +1,9 @@
-// マップの初期化
-const map = L.map('map', {
-    crs: L.CRS.Simple,
-    minZoom: -5,
-    maxZoom: 5,
-    renderer: L.canvas()
+map.on('click', function(e) {
+  // スクロールやズーム時の誤差を回避するため、ピクセル位置から緯度経度を再取得
+  const point = map.latLngToContainerPoint(e.latlng);
+  const latlng = map.containerPointToLatLng(point);
+
+  L.marker(latlng).addTo(map);
 });
 
 // ← この直後に追加
