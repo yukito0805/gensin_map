@@ -1,3 +1,10 @@
+/* ブラウザのデフォルトスタイルをリセット */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 /* 全体のスタイル */
 body {
     margin: 0;
@@ -19,9 +26,74 @@ body {
     align-items: center;
 }
 
+/* トグルボタン */
 #toggleDrawer {
     font-size: 20px;
     padding: 5px 10px;
+    cursor: pointer;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* ドロワー */
+#drawer {
+    position: fixed;
+    top: 0;
+    left: -300px; /* 初期状態で隠す */
+    width: 300px;
+    height: 100vh;
+    background: #fff;
+    padding: 20px;
+    border-right: 1px solid #ccc;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+    transition: left 0.3s ease;
+    overflow-y: auto;
+}
+
+#drawer.open {
+    left: 0; /* ドロワーを表示 */
+}
+
+#drawer h3 {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+#drawer label {
+    display: block;
+    margin: 5px 0;
+}
+
+#drawer button {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    margin: 5px 0;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#drawer button:hover {
+    background: #45a049;
+}
+
+#drawer #counts p {
+    margin: 5px 0;
+}
+
+/* 閉じるボタン */
+#closeDrawer {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    background: none;
+    border: none;
     cursor: pointer;
 }
 
@@ -35,7 +107,7 @@ body {
 .modal {
     display: none;
     position: fixed;
-    z-index: 1001;
+    z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
@@ -52,8 +124,8 @@ body {
     position: relative;
     max-width: 600px;
     width: 90%;
-    max-height: 70vh;
-    overflow-y: auto;
+    max-height: 80vh;
+    overflow-y: auto; /* スクロール可能 */
 }
 
 .close {
@@ -94,7 +166,7 @@ body {
 .icon-selector {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    gap: 15px;
     margin: 10px 0;
 }
 
@@ -114,14 +186,14 @@ body {
 }
 
 .icon-option img {
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
     object-fit: contain;
 }
 
 .icon-option span {
     margin-top: 5px;
-    font-size: 12px;
+    font-size: 14px;
     text-align: center;
 }
 
@@ -132,6 +204,11 @@ body {
 
 .icon-option:hover {
     border-color: #ccc;
+}
+
+.icon-option.empty {
+    border: none;
+    cursor: default;
 }
 
 /* フォームボタン */
@@ -169,7 +246,7 @@ body {
 
 /* ピンのポップアップボタン */
 .leaflet-popup-content button {
-    background-color: #f44336;
+    background-color: #f44336; /* 削除ボタン */
     color: white;
     padding: 5px 10px;
     border: none;
@@ -179,7 +256,7 @@ body {
 }
 
 .leaflet-popup-content button.edit {
-    background-color: #2196F3;
+    background-color: #2196F3; /* 編集ボタン */
 }
 
 .leaflet-popup-content button:hover {
@@ -190,11 +267,32 @@ body {
     background-color: #1976D2;
 }
 
+/* ピンのポップアップ内の画像 */
+.leaflet-popup-content img {
+    max-width: 100px;
+    max-height: 100px;
+    margin-top: 5px;
+    cursor: pointer;
+    display: block;
+}
+
+/* 画像モーダル */
+#imageModal .modal-content {
+    text-align: center;
+}
+
 /* モバイル対応 */
 @media (max-width: 600px) {
     #controls {
         flex-direction: column;
         align-items: flex-start;
+    }
+    #drawer {
+        width: 250px;
+        left: -250px;
+    }
+    #drawer.open {
+        left: 0;
     }
     .modal-content {
         width: 95%;
@@ -208,10 +306,10 @@ body {
         gap: 5px;
     }
     .icon-selector {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, 1fr); /* モバイルでは2列 */
     }
     .icon-option img {
-        width: 50px;
-        height: 50px;
+        width: 60px;
+        height: 60px;
     }
 }
