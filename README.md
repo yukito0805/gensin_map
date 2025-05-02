@@ -1,1 +1,0 @@
-# gensin_map
